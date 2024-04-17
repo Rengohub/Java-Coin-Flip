@@ -1,3 +1,5 @@
+package client;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -8,12 +10,12 @@ public class ClientView extends JFrame {
 
     public ClientView() {
         super("Client Interface");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(300, 200);
-        this.setLayout(new FlowLayout());
-        this.add(sendButton);
-        this.add(new JScrollPane(textArea));
-        this.setVisible(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(300, 200);
+        setLayout(new FlowLayout());
+        add(sendButton);
+        add(new JScrollPane(textArea));
+        setVisible(true);
     }
 
     public void setSendButtonListener(ActionListener actionListener) {
