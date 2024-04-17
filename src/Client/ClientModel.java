@@ -9,22 +9,39 @@ public class ClientModel {
     private BufferedReader in;
 
     public void connectToServer(String ip, int port) throws IOException {
-        socket = new Socket(ip, port);
-        out = new PrintWriter(socket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        if (socket == null || socket.isClosed()) {
+            socket = new Socket(ip, port);
+            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        }
     }
 
     public void sendMessage(String message) {
-        out.println(message);
+        if (out != null) {
+            out.println(message);
+        }
     }
 
     public String receiveMessage() throws IOException {
-        return in.readLine();
+        if (in != null) {
+            return in.readLine(); // You might want to handle this asynchronously or in a separate thread depending on GUI responsiveness requirements.
+        }
+        return null;
     }
 
     public void closeConnection() throws IOException {
-        in.close();
-        out.close();
-        socket.close();
+        if (in != null) {
+            in.close();
+        }
+        if (out != null) {
+            out.close();
+        }
+        if (socket != null) {
+            socket.close();
+        }
+    }
+
+    public boolean isConnected() {
+        return socket != null && socket.isConnected() && !socket.isClosed();
     }
 }

@@ -16,11 +16,12 @@ public class ClientController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    model.connectToServer("localhost", 5000); // Server IP and port
+                    if (!model.isConnected()) { // Check if model is already connected
+                        model.connectToServer("localhost", 12345);
+                    }
                     model.sendMessage("Hello World");
                     String response = model.receiveMessage();
                     view.updateTextArea("Server: " + response);
-                    model.closeConnection();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                     view.updateTextArea("Error connecting to server.");

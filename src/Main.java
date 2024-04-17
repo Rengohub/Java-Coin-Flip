@@ -1,16 +1,36 @@
-import client.*;
-import server.*;
+import client.ClientController;
+import client.ClientModel;
+import client.ClientView;
+import server.ServerController;
+import server.ServerModel;
 
 public class Main {
     public static void main(String[] args) {
+        // Start the server in a new thread
+        Thread serverThread = new Thread(() -> {
+            ServerModel serverModel = new ServerModel();
+            ServerController serverController = new ServerController(12345, serverModel);
+            serverController.start(); // This will block and wait for clients
+        });
+        serverThread.start();
+
+        // Allow the server some time to start up
+        try {
+            Thread.sleep(1000); // 1-second delay for the server to initialize
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.out.println("Server start was interrupted");
+        }
+
+        // Start the client
         ClientView view = new ClientView();  // This launches the GUI
         ClientModel model = new ClientModel();
         ClientController controller = new ClientController(view, model);
 
-        // Perform a manual test to connect to the server and send a message
+        // Execute a test interaction with the server
         try {
             // Initialize the connection
-            model.connectToServer("localhost", 12345); // Make sure your server is running on this port
+            model.connectToServer("localhost", 12345); // Assuming server is on localhost and port 5000
             System.out.println("Connected to server.");
 
             // Send a test message
