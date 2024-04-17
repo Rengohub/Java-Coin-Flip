@@ -24,7 +24,7 @@ public class ClientModel {
 
     public String receiveMessage() throws IOException {
         if (in != null) {
-            return in.readLine(); // You might want to handle this asynchronously or in a separate thread depending on GUI responsiveness requirements.
+            return in.readLine(); // Might want to handle this asynchronously or in a separate thread depending on GUI responsiveness requirements.
         }
         return null;
     }
