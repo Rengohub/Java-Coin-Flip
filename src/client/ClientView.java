@@ -1,6 +1,8 @@
 package client;
 
 import javax.swing.*;
+import javax.xml.ws.Action;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
@@ -10,15 +12,13 @@ import javax.imageio.ImageIO;
 
 public class ClientView extends JFrame {
     private JLabel imgLabel;
-    JFrame frame;
-    JButton startButton;
     JButton headsButton;
     JButton tailsButton;
     private JTextField betField;
     private int betAmount = 0;
     String[] imagesPath = {"src/Assets/Java-Coin-Flip.png", "src/Assets/Java-Coin-Tails-Flip.png", "src/Assets/Java-Coin-Flip.png", "src/Assets/Java-Coin-Heads-Flip.png"};
-    // private String headsImg = imagesPath[3];
-    // private String tailsImg = imagesPath[1];
+    private String headsImg = imagesPath[3];
+    private String tailsImg = imagesPath[1];
     private Timer timer;
     JButton decreaseBetButton;
     JButton increaseBetButton;
@@ -29,14 +29,19 @@ public class ClientView extends JFrame {
     //     imageFlag = 0;
     // }
 
+    // public void startImageRotator() {
+    //     imageFlag = 1;
+    // }
+
                                         //////////     START GAME       //////////
     public ClientView() {
         new GameStart();
-        // ImageRotator(imagesPath);
     }
 
     public class GameStart extends JFrame {
-       
+        JButton startButton = new JButton("Start Game");
+        JFrame frame;
+
         public GameStart() {
             LandingPage();
         }
@@ -54,7 +59,14 @@ public class ClientView extends JFrame {
             label.setBorder(BorderFactory.createLineBorder(Color.black));
             label.setPreferredSize(new Dimension(350, 150));
 
-            startButton = new JButton("Start Game");
+            
+            startButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    frame.dispose();
+                    ImageRotator(imagesPath);
+                }
+            });
  
             frame.add(label, BorderLayout.CENTER);
             frame.add(startButton, BorderLayout.SOUTH);
@@ -87,14 +99,18 @@ public class ClientView extends JFrame {
         timer.start();
     }
 
+    private void stopTimer() {
+        timer.stop();
+    }
+
        // Image Rotator Pointer Method
        private void updateImage() {
+        // while (imageFlag == 1) {
                 if (currentImageIndex < imagesPath.length) {
                     try {
                         Image img = ImageIO.read(new File(imagesPath[currentImageIndex]));
                         ImageIcon icon = new ImageIcon(img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH));
                         imgLabel.setIcon(icon);
-                        System.out.println(currentImageIndex);
                         currentImageIndex++;
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -103,28 +119,29 @@ public class ClientView extends JFrame {
                     currentImageIndex = 0;
                 }
             }
+        // }
 
     // Force Heads image
-    // public void updateHeadsImage() {
-    //     try {
-    //         Image img = ImageIO.read(new File(headsImg));
-    //         ImageIcon icon = new ImageIcon(img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH));
-    //         imgLabel.setIcon(icon);
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+    public void updateHeadsImage() {
+        try {
+            Image img = ImageIO.read(new File(headsImg));
+            ImageIcon icon = new ImageIcon(img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH));
+            imgLabel.setIcon(icon);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     // Force Tails image
-    // public void updateTailsImage() {
-    //     try {
-    //         Image img = ImageIO.read(new File(tailsImg));
-    //         ImageIcon icon = new ImageIcon(img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH));
-    //         imgLabel.setIcon(icon);
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+    public void updateTailsImage() {
+        try {
+            Image img = ImageIO.read(new File(tailsImg));
+            ImageIcon icon = new ImageIcon(img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH));
+            imgLabel.setIcon(icon);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     // Main View Method
     public void createUI() {
@@ -151,6 +168,20 @@ public class ClientView extends JFrame {
         decreaseBetButton = new JButton("▼");
         increaseBetButton = new JButton("▲");
 
+        decreaseBetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                adjustBet(-10);
+            }
+        });
+    
+        increaseBetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                adjustBet(10);
+            }
+        });
+
         bettingPanel.add(decreaseBetButton);
         bettingPanel.add(betField);
         bettingPanel.add(increaseBetButton);
@@ -160,9 +191,37 @@ public class ClientView extends JFrame {
         headsButton = new JButton("H");
         tailsButton = new JButton("T");
 
+        tailsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stopTimer();
+                updateTailsImage();
+                // Thread.sleep(7000);
+                // startTimer();
+                // updateTextArea("Flipping coin...");
+                // updateTextArea("Coin landed on: " + model.flipCoin());
+                // updateTextArea("You " + model.checkWin("heads"));
+            }
+        });
+        
+        headsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stopTimer();
+                updateHeadsImage();
+                // Thread.sleep(7000);
+                // startTimer();
+                // updateTextArea("Flipping coin...");
+                // updateTextArea("Coin landed on: " + model.flipCoin());
+                // updateTextArea("You " + model.checkWin("heads"));
+            }
+        });
+
         choicesPanel.add(headsButton);
         choicesPanel.add(bettingPanel);
         choicesPanel.add(tailsButton);
+
+        // startImageRotator();
 
         add(choicesPanel, BorderLayout.SOUTH);
     }
@@ -183,4 +242,5 @@ public class ClientView extends JFrame {
     public void setBet() {
         betAmount = 0;
     }
+
 }
