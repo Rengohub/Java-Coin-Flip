@@ -12,21 +12,46 @@ public class ClientController {
         this.view = view;
         this.model = model;
 
-        view.setSendButtonListener(new ActionListener() {
+        // view.setSendButtonListener(new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         try {
+        //             if (!model.isConnected()) { // Check if model is already connected
+        //                 model.connectToServer("localhost", 12345);
+        //             }
+        //             model.sendMessage("Hello World");
+        //             String response = model.receiveMessage();
+        //             view.updateTextArea("Server: " + response);
+        //         } catch (IOException ex) {
+        //             ex.printStackTrace();
+        //             view.updateTextArea("Error connecting to server.");
+        //         }
+        //     }
+        // });
+
+        view.decreaseBetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    if (!model.isConnected()) { // Check if model is already connected
-                        model.connectToServer("localhost", 12345);
-                    }
-                    model.sendMessage("Hello World");
-                    String response = model.receiveMessage();
-                    view.updateTextArea("Server: " + response);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    view.updateTextArea("Error connecting to server.");
-                }
+                view.adjustBet(-10);
             }
         });
+    
+        // view.increaseBetButton.addActionListener(new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         view.adjustBet(10);
+        //     }
+        // });
+
+        // view.headsButton.addActionListener(new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         view.stopImageRotator();
+        //         view.updateTailsImage();
+        //         // view.updateTextArea("Flipping coin...");
+        //         // view.updateTextArea("Coin landed on: " + model.flipCoin());
+        //         // view.updateTextArea("You " + model.checkWin("heads"));
+        //     }
+        // });
     }
 }
