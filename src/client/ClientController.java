@@ -43,6 +43,14 @@ public class ClientController {
             }
         });
 
+        view.startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.frame.dispose();
+                view.ImageRotator(view.imagesPath);
+            }
+        });
+
         // view.headsButton.addActionListener(new ActionListener() {
         //     @Override
         //     public void actionPerformed(ActionEvent e) {

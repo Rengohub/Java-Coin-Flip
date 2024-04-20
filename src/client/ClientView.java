@@ -10,25 +10,56 @@ import javax.imageio.ImageIO;
 
 public class ClientView extends JFrame {
     private JLabel imgLabel;
+    JFrame frame;
+    JButton startButton;
     JButton headsButton;
     JButton tailsButton;
     private JTextField betField;
     private int betAmount = 0;
-    private String[] imagesPath = {"src/Assets/Java-Coin-Flip.png", "src/Assets/Java-Coin-Tails-Flip.png", "src/Assets/Java-Coin-Flip.png", "src/Assets/Java-Coin-Heads-Flip.png"};
+    String[] imagesPath = {"src/Assets/Java-Coin-Flip.png", "src/Assets/Java-Coin-Tails-Flip.png", "src/Assets/Java-Coin-Flip.png", "src/Assets/Java-Coin-Heads-Flip.png"};
     // private String headsImg = imagesPath[3];
     // private String tailsImg = imagesPath[1];
     private Timer timer;
     JButton decreaseBetButton;
     JButton increaseBetButton;
     private int currentImageIndex = 0;
-    private int imageFlag = 1;
+    // private int imageFlag = 1;
 
     // public void stopImageRotator() {
     //     imageFlag = 0;
     // }
 
+                                        //////////     START GAME       //////////
     public ClientView() {
-        ImageRotator(imagesPath);
+        new GameStart();
+        // ImageRotator(imagesPath);
+    }
+
+    public class GameStart extends JFrame {
+       
+        public GameStart() {
+            LandingPage();
+        }
+
+        public void LandingPage() {
+            frame = new JFrame();
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(1080, 720);
+            frame.setLocationRelativeTo(null);
+            frame.setLayout(new BorderLayout());
+
+            JLabel label = new JLabel("Welcome to Coin Flip!");
+            label.setHorizontalAlignment(JLabel.CENTER);
+            label.setVerticalAlignment(JLabel.CENTER);
+            label.setBorder(BorderFactory.createLineBorder(Color.black));
+            label.setPreferredSize(new Dimension(350, 150));
+
+            startButton = new JButton("Start Game");
+ 
+            frame.add(label, BorderLayout.CENTER);
+            frame.add(startButton, BorderLayout.SOUTH);
+            frame.setVisible(true);
+        }
     }
 
     // public void refreshImage() {
@@ -43,7 +74,7 @@ public class ClientView extends JFrame {
     }
 
     private void startTimer() {
-        int delay = 1000;
+        int delay = 100;
 
         ActionListener taskPerformer = new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -63,6 +94,7 @@ public class ClientView extends JFrame {
                         Image img = ImageIO.read(new File(imagesPath[currentImageIndex]));
                         ImageIcon icon = new ImageIcon(img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH));
                         imgLabel.setIcon(icon);
+                        System.out.println(currentImageIndex);
                         currentImageIndex++;
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -107,10 +139,9 @@ public class ClientView extends JFrame {
         imgLabel.setVerticalAlignment(JLabel.CENTER);
         imgLabel.setBorder(BorderFactory.createLineBorder(Color.black));
         imgLabel.setPreferredSize(new Dimension(350, 150));
-
-
       
         add(imgLabel, BorderLayout.CENTER);
+        setVisible(true);
 
         JPanel bettingPanel = new JPanel();
 
@@ -134,7 +165,6 @@ public class ClientView extends JFrame {
         choicesPanel.add(tailsButton);
 
         add(choicesPanel, BorderLayout.SOUTH);
-        setVisible(true);
     }
 
 
