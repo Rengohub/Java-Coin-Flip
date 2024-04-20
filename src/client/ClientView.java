@@ -15,17 +15,17 @@ public class ClientView extends JFrame {
     private JTextField betField;
     private int betAmount = 0;
     private String[] imagesPath = {"src/Assets/Java-Coin-Flip.png", "src/Assets/Java-Coin-Tails-Flip.png", "src/Assets/Java-Coin-Flip.png", "src/Assets/Java-Coin-Heads-Flip.png"};
-    private String headsImg = imagesPath[3];
-    private String tailsImg = imagesPath[1];
+    // private String headsImg = imagesPath[3];
+    // private String tailsImg = imagesPath[1];
     private Timer timer;
     JButton decreaseBetButton;
     JButton increaseBetButton;
     private int currentImageIndex = 0;
     private int imageFlag = 1;
 
-    public void stopImageRotator() {
-        imageFlag = 0;
-    }
+    // public void stopImageRotator() {
+    //     imageFlag = 0;
+    // }
 
     public ClientView() {
         ImageRotator(imagesPath);
@@ -39,10 +39,11 @@ public class ClientView extends JFrame {
         this.imagesPath = images;
         createUI();
         startTimer();
+        setVisible(true);
     }
 
     private void startTimer() {
-        int delay = 5000;
+        int delay = 1000;
 
         ActionListener taskPerformer = new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -57,7 +58,6 @@ public class ClientView extends JFrame {
 
        // Image Rotator Pointer Method
        private void updateImage() {
-            while(imageFlag == 1) { 
                 if (currentImageIndex < imagesPath.length) {
                     try {
                         Image img = ImageIO.read(new File(imagesPath[currentImageIndex]));
@@ -71,7 +71,6 @@ public class ClientView extends JFrame {
                     currentImageIndex = 0;
                 }
             }
-    }
 
     // Force Heads image
     // public void updateHeadsImage() {
@@ -106,6 +105,7 @@ public class ClientView extends JFrame {
         imgLabel = new JLabel();
         imgLabel.setHorizontalAlignment(JLabel.CENTER);
         imgLabel.setVerticalAlignment(JLabel.CENTER);
+        imgLabel.setBorder(BorderFactory.createLineBorder(Color.black));
         imgLabel.setPreferredSize(new Dimension(350, 150));
 
 
@@ -119,9 +119,6 @@ public class ClientView extends JFrame {
 
         decreaseBetButton = new JButton("▼");
         increaseBetButton = new JButton("▲");
-
-        
-
 
         bettingPanel.add(decreaseBetButton);
         bettingPanel.add(betField);
@@ -137,6 +134,7 @@ public class ClientView extends JFrame {
         choicesPanel.add(tailsButton);
 
         add(choicesPanel, BorderLayout.SOUTH);
+        setVisible(true);
     }
 
 

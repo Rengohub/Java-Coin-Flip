@@ -36,12 +36,12 @@ public class ClientController {
             }
         });
     
-        // view.increaseBetButton.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         view.adjustBet(10);
-        //     }
-        // });
+        view.increaseBetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.adjustBet(10);
+            }
+        });
 
         // view.headsButton.addActionListener(new ActionListener() {
         //     @Override
