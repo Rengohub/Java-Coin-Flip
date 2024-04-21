@@ -18,6 +18,6 @@ public class UserServerModel extends BaseServerModel {
     }
 
     private String createUser(String userData) {
-        
+
     }
 }
