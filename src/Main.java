@@ -1,8 +1,8 @@
 import client.ClientController;
 import client.ClientModel;
 import client.ClientView;
-import server.ServerController;
-import server.ServerModel;
+import server.controller.ServerController;
+import server.model.ServerModel;
 
 public class Main {
     public static void main(String[] args) {
