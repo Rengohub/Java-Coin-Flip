@@ -1,6 +1,9 @@
-package client;
+package client.model;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ClientModel {
@@ -24,24 +27,20 @@ public class ClientModel {
 
     public String receiveMessage() throws IOException {
         if (in != null) {
-            return in.readLine(); // You might want to handle this asynchronously or in a separate thread depending on GUI responsiveness requirements.
+            return in.readLine();
         }
         return null;
     }
 
     public void closeConnection() throws IOException {
-        if (in != null) {
-            in.close();
-        }
         if (out != null) {
             out.close();
+        }
+        if (in != null) {
+            in.close();
         }
         if (socket != null) {
             socket.close();
         }
-    }
-
-    public boolean isConnected() {
-        return socket != null && socket.isConnected() && !socket.isClosed();
     }
 }
