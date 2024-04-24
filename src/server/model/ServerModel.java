@@ -1,28 +1,39 @@
 package server.model;
 
-public class ServerModel {
-    private UserServerModel userServerModel;
+import server.commands.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class ServerModel extends BaseServerModel implements MessageProcessor {
+    private Map<String, Command> commands;
 
     public ServerModel() {
-        this.userServerModel = new UserServerModel();  // Assuming this manages all user-related operations
+        initializeCommands();
     }
 
+    private void initializeCommands() {
+        commands = new HashMap<>();
+        commands.put("CREATE_USER", new CreateUser(new UserServerModel()));
+        commands.put("DELETE_USER", new DeleteUser(new UserServerModel()));
+        commands.put("READ_USER", new ReadUser(new UserServerModel()));
+        commands.put("UPDATE_USER", new UpdateUser(new UserServerModel()));
+        commands.put("LOGIN", new Login(new UserServerModel()));
+        commands.put("REGISTER_USER", new RegisterUser(new UserServerModel()));
+        // Initialize other commands similarly
+    }
+
+    @Override
     public String processMessage(String message) {
         String[] parts = message.split(":");
-        String requestType = parts[0];
+        String commandKey = parts[0];
         String requestData = parts.length > 1 ? parts[1] : "";
 
-        switch (requestType) {
-            case "CREATE_USER":
-                return userServerModel.createUser(requestData);
-            case "UPDATE_USER":
-                return userServerModel.updateUser(requestData);
-            case "DELETE_USER":
-                return userServerModel.deleteUser(requestData);
-            case "READ_USER":
-                return userServerModel.readUser(requestData);
-            default:
-                return "Unsupported request type";
+        Command command = commands.getOrDefault(commandKey, new UnsupportedCommand("Unsupported request type"));
+        try {
+            return command.execute(requestData);
+        } catch (Exception e) {
+            return "Error processing request: " + e.getMessage(); // General error handling, could be refined further
         }
     }
 }
