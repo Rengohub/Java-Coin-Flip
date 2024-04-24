@@ -1,14 +1,35 @@
 package server.model;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public abstract class BaseServerModel {
     protected Connection connection;
 
     public BaseServerModel() {
-        this.connectToDatabase("jdbc:sqlite:serverDB.db");  // Using SQLite
+//        this.connectToDatabase("jdbc:sqlite:serverDB.db");  // Using SQLite
+        this.initializeDatabase();
+    }
+
+    public void initializeDatabase() {
+        try {
+            if (connection == null) {
+                connectToDatabase("jdbc:sqlite:serverDB.db");
+            }
+            DatabaseMetaData dbm = connection.getMetaData();
+            ResultSet tables = dbm.getTables(null, null, "users", null);
+            if (!tables.next()) {
+                String sql = "CREATE TABLE users (" +
+                        "id INTEGER PRIMARY KEY," +
+                        "username TEXT NOT NULL," +
+                        "password TEXT NOT NULL," +
+                        "credits INTEGER NOT NULL," +
+                        "streak INTEGER NOT NULL)";
+                connection.createStatement().execute(sql);
+                System.out.println("Table created successfully.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error during database initialization: " + e.getMessage());
+        }
     }
 
     private void connectToDatabase(String url) {
