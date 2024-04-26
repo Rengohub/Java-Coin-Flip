@@ -1,6 +1,7 @@
 package server.commands;
 
 import server.model.DatabaseUtils;
+
 import java.sql.SQLException;
 
 public class CreateUser implements Command {
@@ -10,7 +11,13 @@ public class CreateUser implements Command {
         if (data.length != 4) {
             return "Invalid user data format. Expected format: username,password,credits,streak";
         }
+
+        for (int i = 0; i < data.length; i++) {
+            data[i] = data[i].trim();
+        }
+
         String sql = "INSERT INTO users (username, password, credits, streak) VALUES (?, ?, ?, ?)";
+
         try {
             DatabaseUtils.executeUpdate(sql, data);
             return "User created successfully.";

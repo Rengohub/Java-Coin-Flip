@@ -73,31 +73,24 @@ public class TestUserView extends JFrame {
     private void handleRegister(ActionEvent e) {
         JTextField usernameField = new JTextField(10);
         JPasswordField passwordField = new JPasswordField(10);
-        JTextField creditsField = new JTextField(5);
-        JTextField streakField = new JTextField(5);
         JPanel panel = new JPanel(new GridLayout(0, 2, 2, 2));
         panel.add(new JLabel("Username:"));
         panel.add(usernameField);
         panel.add(new JLabel("Password:"));
         panel.add(passwordField);
-        panel.add(new JLabel("Credits:"));
-        panel.add(creditsField);
-        panel.add(new JLabel("Streak:"));
-        panel.add(streakField);
 
-        int result = JOptionPane.showConfirmDialog(null, panel,
-                "Register", JOptionPane.OK_CANCEL_OPTION);
+        int result = JOptionPane.showConfirmDialog(null, panel, "Register", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
-            String username = usernameField.getText();
-            String password = new String(passwordField.getPassword());
-            String credits = creditsField.getText();
-            String streak = streakField.getText();
-            client.sendRequest("REGISTER_USER:" + username + "," + password + "," + credits + "," + streak);
+            String username = usernameField.getText().trim(); // Trim to remove any leading or trailing spaces
+            String password = new String(passwordField.getPassword()).trim(); // Convert char[] to String and trim
+
+            // Send the registration request with just the username and password
+            client.sendRequest("REGISTER_USER:" + username + "," + password);
             try {
                 String response = client.getResponse();
-                JOptionPane.showMessageDialog(this, response);
+                JOptionPane.showMessageDialog(null, response); // Show the response message in a dialog
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Failed to process registration: " + ex.getMessage());
+                JOptionPane.showMessageDialog(null, "Failed to process registration: " + ex.getMessage()); // Handle any exceptions
             }
         }
     }
