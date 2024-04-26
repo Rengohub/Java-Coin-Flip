@@ -2,6 +2,7 @@ package server.model;
 
 import server.commands.*;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,17 +10,22 @@ public class ServerModel extends BaseServerModel {
     private Map<String, Command> commands;
 
     public ServerModel() {
+        try {
+            DatabaseUtils.initializeDatabase();
+        } catch (SQLException e) {
+            System.out.println("Error initializing database: " + e.getMessage());
+        }
         initializeCommands();
     }
 
     private void initializeCommands() {
         commands = new HashMap<>();
-        commands.put("CREATE_USER", new CreateUser(new UserServerModel()));
-        commands.put("DELETE_USER", new DeleteUser(new UserServerModel()));
-        commands.put("READ_USER", new ReadUser(new UserServerModel()));
-        commands.put("UPDATE_USER", new UpdateUser(new UserServerModel()));
-        commands.put("LOGIN", new Login(new UserServerModel()));
-        commands.put("REGISTER_USER", new RegisterUser(new UserServerModel()));
+        commands.put("CREATE_USER", new CreateUser());
+        commands.put("DELETE_USER", new DeleteUser());
+        commands.put("READ_USER", new ReadUser());
+        commands.put("UPDATE_USER", new UpdateUser());
+        commands.put("LOGIN", new Login());
+        commands.put("REGISTER_USER", new RegisterUser());
         // Initialize other commands similarly
     }
 

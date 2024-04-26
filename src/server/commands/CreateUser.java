@@ -1,18 +1,21 @@
 package server.commands;
 
-
-import server.model.UserOperationException;
-import server.model.UserServerModel;
+import server.model.DatabaseUtils;
+import java.sql.SQLException;
 
 public class CreateUser implements Command {
-    private UserServerModel userServerModel;
-
-    public CreateUser(UserServerModel userServerModel) {
-        this.userServerModel = userServerModel;
-    }
-
     @Override
-    public String execute(String userData) throws UserOperationException {
-        return userServerModel.createUser(userData);
+    public String execute(String userData) {
+        String[] data = userData.split(",");
+        if (data.length != 4) {
+            return "Invalid user data format. Expected format: username,password,credits,streak";
+        }
+        String sql = "INSERT INTO users (username, password, credits, streak) VALUES (?, ?, ?, ?)";
+        try {
+            DatabaseUtils.executeUpdate(sql, data);
+            return "User created successfully.";
+        } catch (SQLException e) {
+            return "Error creating user: " + e.getMessage();
+        }
     }
 }

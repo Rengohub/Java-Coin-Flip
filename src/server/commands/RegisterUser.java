@@ -1,20 +1,22 @@
 package server.commands;
 
-import server.model.UserServerModel;
+import server.model.DatabaseUtils;
 
-public class RegisterUser implements Command{
-    private UserServerModel userServerModel;
+import java.sql.SQLException;
 
-    public RegisterUser(UserServerModel userServerModel) {
-        this.userServerModel = userServerModel;
-    }
-
+public class RegisterUser implements Command {
     @Override
-    public String execute(String data) {
+    public String execute(String userData) {
+        String[] data = userData.split(",");
+        if (data.length != 4) {
+            return "Invalid registration data format. Expected format: username,password,credits,streak";
+        }
+        String sql = "INSERT INTO users (username, password, credits, streak) VALUES (?, ?, ?, ?)";
         try {
-            return userServerModel.registerUser(data);
-        } catch (Exception e) {
-            return "Error during registration: " + e.getMessage();
+            DatabaseUtils.executeUpdate(sql, data);
+            return "User registered successfully.";
+        } catch (SQLException e) {
+            return "Error registering user: " + e.getMessage();
         }
     }
 }

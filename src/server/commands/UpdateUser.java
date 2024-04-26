@@ -1,17 +1,22 @@
 package server.commands;
 
-import server.model.UserOperationException;
-import server.model.UserServerModel;
+import server.model.DatabaseUtils;
+
+import java.sql.SQLException;
 
 public class UpdateUser implements Command {
-    private UserServerModel userServerModel;
-
-    public UpdateUser(UserServerModel userServerModel) {
-        this.userServerModel = userServerModel;
-    }
-
     @Override
-    public String execute(String userData) throws UserOperationException {
-        return userServerModel.updateUser(userData);
+    public String execute(String userData) {
+        String[] data = userData.split(",");
+        if (data.length != 5) {
+            return "Invalid user data format. Expected format: username,newPassword,credits,streak,userId";
+        }
+        String sql = "UPDATE users SET password = ?, credits = ?, streak = ? WHERE id = ?";
+        try {
+            DatabaseUtils.executeUpdate(sql, data);
+            return "User updated successfully.";
+        } catch (SQLException e) {
+            return "Error updating user: " + e.getMessage();
+        }
     }
 }

@@ -1,3 +1,4 @@
+/*
 package server.model;
 
 import java.sql.PreparedStatement;
@@ -153,4 +154,4 @@ public class UserServerModel extends BaseServerModel {
             return "Registration error: " + e.getMessage();
         }
     }
-}
+}*/
