@@ -5,7 +5,7 @@ import server.commands.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ServerModel extends BaseServerModel implements MessageProcessor {
+public class ServerModel extends BaseServerModel {
     private Map<String, Command> commands;
 
     public ServerModel() {
@@ -23,7 +23,6 @@ public class ServerModel extends BaseServerModel implements MessageProcessor {
         // Initialize other commands similarly
     }
 
-    @Override
     public String processMessage(String message) {
         String[] parts = message.split(":");
         String commandKey = parts[0];
