@@ -1,12 +1,7 @@
 package server.model;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.HashMap;
 
 public class DatabaseUtils {
 
@@ -37,6 +32,25 @@ public class DatabaseUtils {
             }
             return result.toString();
         }
+    }
+
+    public static synchronized HashMap<String, String> executeQueryWithResult(String sql, String[] params) throws SQLException {
+        HashMap<String, String> userData = new HashMap<>();
+        try (Connection conn = DriverManager.getConnection(DATABASE_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) {
+                pstmt.setString(i + 1, params[i]);
+            }
+            try (ResultSet rs = pstmt.executeQuery()) {
+                ResultSetMetaData rsmd = rs.getMetaData();
+                if (rs.next()) {
+                    for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                        userData.put(rsmd.getColumnName(i), rs.getString(i));
+                    }
+                }
+            }
+        }
+        return userData;
     }
 
     public static void initializeDatabase() throws SQLException {

@@ -1,8 +1,8 @@
 package server.model.commands;
 
 import server.model.DatabaseUtils;
-
 import java.sql.SQLException;
+import java.util.HashMap;
 
 public class Login implements Command {
     @Override
@@ -11,13 +11,15 @@ public class Login implements Command {
         if (data.length != 2) {
             return "Invalid login data format. Expected format: username,password";
         }
-        String sql = "SELECT password FROM users WHERE username = ?";
+        String sql = "SELECT * FROM users WHERE username = ?";
         try {
-            String result = DatabaseUtils.executeQuery(sql, new String[]{data[0]});
-            if (result.trim().equals(data[1])) {
-                return "Login successful";
+            HashMap<String, String> userData = DatabaseUtils.executeQueryWithResult(sql, new String[]{data[0]});
+            if (userData != null && userData.get("password").trim().equals(data[1])) {
+                // Assuming userData contains keys corresponding to the database fields like id, username, credits, and streak
+                return String.format("Login successful,id=%s,credits=%s,streak=%s",
+                        userData.get("id"), userData.get("credits"), userData.get("streak"));
             } else {
-                return "Invalid password";
+                return "Invalid password or username does not exist";
             }
         } catch (SQLException e) {
             return "Error during login: " + e.getMessage();
