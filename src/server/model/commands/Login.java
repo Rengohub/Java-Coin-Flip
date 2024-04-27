@@ -11,13 +11,12 @@ public class Login implements Command {
         if (data.length != 2) {
             return "Invalid login data format. Expected format: username,password";
         }
-        String sql = "SELECT * FROM users WHERE username = ?";
+        String sql = "SELECT id, username, password FROM users WHERE username = ?";
         try {
             HashMap<String, String> userData = DatabaseUtils.executeQueryWithResult(sql, new String[]{data[0]});
-            if (userData != null && userData.get("password").trim().equals(data[1])) {
-                // Assuming userData contains keys corresponding to the database fields like id, username, credits, and streak
-                return String.format("Login successful,id=%s,credits=%s,streak=%s",
-                        userData.get("id"), userData.get("credits"), userData.get("streak"));
+            if (userData != null && userData.get("password").equals(data[1])) {
+                // Send back login successful message with the UID
+                return "Login successful: UID=" + userData.get("id");
             } else {
                 return "Invalid password or username does not exist";
             }

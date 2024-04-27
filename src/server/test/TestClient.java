@@ -15,6 +15,7 @@ public class TestClient {
     private JButton loginButton, logoutButton, registerButton, createUserButton;
     private JLabel userStatusLabel; // Label to display the login status
     private String currentUser = null; // To keep track of the logged-in user
+    private int currentUserId = -1;
 
     public TestClient(String serverAddress, int serverPort) throws Exception {
         // Establish connection to the server
@@ -107,12 +108,13 @@ public class TestClient {
         try {
             out.println(request);
             String response = in.readLine();
-            System.out.println("Response: " + response); // Debugging line to see what the server actually sends back
-
-            if (request.startsWith("LOGIN:") && response.contains("Login successful")) {
+            if (request.startsWith("LOGIN:") && response.startsWith("Login successful")) {
+                // Extract UID from response
+                String uidPart = response.split("=")[1].trim();
+                currentUserId = Integer.parseInt(uidPart);
                 currentUser = request.substring(6).split(",")[0];
                 updateUIBasedOnUser();
-                JOptionPane.showMessageDialog(null, "Logged in as: " + currentUser); // Additional feedback
+                JOptionPane.showMessageDialog(null, "Logged in successfully as " + currentUser + " with UID " + currentUserId);
             } else {
                 JOptionPane.showMessageDialog(null, response);
             }
