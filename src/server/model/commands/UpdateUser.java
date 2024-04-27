@@ -1,4 +1,4 @@
-package server.commands;
+package server.model.commands;
 
 import server.model.DatabaseUtils;
 

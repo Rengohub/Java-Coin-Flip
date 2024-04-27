@@ -1,6 +1,6 @@
 package server.model;
 
-import server.commands.*;
+import server.model.commands.*;
 
 import java.sql.SQLException;
 import java.util.HashMap;
