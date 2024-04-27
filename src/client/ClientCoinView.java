@@ -89,13 +89,13 @@ public class ClientCoinView extends JFrame {
         choicesPanel.add(tailsButton);
 
         // startImageRotator();
+        jframe.add(ClientView.header(), BorderLayout.NORTH);
         jframe.add(imgLabel, BorderLayout.CENTER);
         jframe.add(choicesPanel, BorderLayout.SOUTH);
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jframe.setVisible(true);
 
     }
-
 
 
     private void startTimer() {

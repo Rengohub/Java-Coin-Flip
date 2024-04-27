@@ -28,14 +28,6 @@ public class ClientView extends JFrame {
         balance.setEditable(false);
         MainMenu = new JButton("Main Menu");
 
-        MainMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new ClientGameStart();
-            }
-        });
-
-
-
 
         JButton leaderBoards = new JButton("Leaderboards");
         JButton logoutButton = new JButton("Logout");
@@ -51,36 +43,11 @@ public class ClientView extends JFrame {
         return header;
     }
 
-    public JButton getMainMenuButton() {
+    public void cycleFrame() {
+        setVisible(false);
+    }
+
+    public JButton getMainMenu() {
         return MainMenu;
     }
-
-
-    // Force Heads image
-    // public void updateHeadsImage() {
-    //     try {
-    //         Image img = ImageIO.read(new File(headsImg));
-    //         ImageIcon icon = new ImageIcon(img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH));
-    //         imgLabel.setIcon(icon);
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
-
-    // Force Tails image
-    // public void updateTailsImage() {
-    //     try {
-    //         Image img = ImageIO.read(new File(tailsImg));
-    //         ImageIcon icon = new ImageIcon(img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH));
-    //         imgLabel.setIcon(icon);
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
-
-    // Main View Method
-    public void createUI() {
- 
-    }
-
 }
