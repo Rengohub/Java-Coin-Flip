@@ -5,53 +5,61 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class ClientController {
-    private ClientView view;
-    private ClientModel model;
+    private ClientLoginView loginView;
+    private ClientGameStart gameStartView;
+    private ClientCoinView coinGameView;
+    private ClientDiceView diceGameView;
+    private ClientLeaderboardView leaderboardView;
 
-    public ClientController(ClientView view, ClientModel model) {
-        this.view = view;
-        this.model = model;
+    // Start // 
+    public ClientController() {
+        loginView = new ClientLoginView();
 
-        // view.setSendButtonListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         try {
-        //             if (!model.isConnected()) { // Check if model is already connected
-        //                 model.connectToServer("localhost", 12345);
-        //             }
-        //             model.sendMessage("Hello World");
-        //             String response = model.receiveMessage();
-        //             view.updateTextArea("Server: " + response);
-        //         } catch (IOException ex) {
-        //             ex.printStackTrace();
-        //             view.updateTextArea("Error connecting to server.");
-        //         }
-        //     }
-        // });
+        loginView.getloginbutton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loginView.cycleFrame();
+                login();
+            }
+        });
+    }
 
-        // view.decreaseBetButton.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         view.adjustBet(-10);
-        //     }
-        // });
-    
-        // view.increaseBetButton.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         view.adjustBet(10);
-        //     }
-        // });
+    private void login() {
+        // Implementation for logging in
+        gameStartView = new ClientGameStart();
 
-        // view.headsButton.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         view.stopImageRotator();
-        //         view.updateTailsImage();
-        //         // view.updateTextArea("Flipping coin...");
-        //         // view.updateTextArea("Coin landed on: " + model.flipCoin());
-        //         // view.updateTextArea("You " + model.checkWin("heads"));
-        //     }
-        // });
+        gameStartView.getCoinButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameStartView.exitGameV();
+                showCoinGame();
+            }
+        });
+
+        gameStartView.getDiceButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameStartView.exitGameV();
+                showDiceGame();
+            }
+        });
+    }
+
+    private void showCoinGame() {
+        coinGameView = new ClientCoinView();
+    }
+
+    private void showDiceGame() {
+        diceGameView = new ClientDiceView();
+    }
+
+
+
+    private void flipCoin() {
+        // Implementation for flipping a coin
+    }
+
+    private void rollDice() {
+        // Implementation for rolling dice
     }
 }
