@@ -112,24 +112,30 @@ public class TestClient {
             out.println(request);
             out.flush();
 
-            String response = in.readLine();
-            if (response == null) {
+            StringBuilder responseBuilder = new StringBuilder();
+            String line;
+
+            while ((line = in.readLine()) != null && !line.equals("END")) {
+                responseBuilder.append(line + "\n");
+            }
+
+            if (line == null) {
+                // If line is null, it means the server has closed the connection unexpectedly
                 throw new IOException("Connection closed by server.");
             }
 
+            String response = responseBuilder.toString().trim(); // Trim to remove the last newline
             System.out.println("Request sent: " + request);
-            System.out.println("Initial response received: " + response);
+            System.out.println("Full response received: " + response);
+
 
             // Handle specific responses
-            if (request.startsWith("LOGIN:")) {
-                if (response.startsWith("Login successful")) {
-                    // Extracting user details from the response
-                    String uidPart = response.split("=")[1].trim();
-                    currentUserId = Integer.parseInt(uidPart);
-                    currentUser = request.substring(6).split(",")[0];
-                    updateUIBasedOnUser();
-                    return "Logged in successfully as " + currentUser + " with UID " + currentUserId;
-                }
+            if (request.startsWith("LOGIN:") && response.startsWith("Login successful")) {
+                String uidPart = response.split("UID=")[1].trim(); // Assuming the server sends UID in this format
+                currentUserId = Integer.parseInt(uidPart);
+                currentUser = request.substring(6).split(",")[0];
+                updateUIBasedOnUser();
+                return "Logged in successfully as " + currentUser + " with UID " + currentUserId;
             }
 
             // Return the full response for further processing or display

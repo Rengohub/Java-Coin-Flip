@@ -38,9 +38,10 @@ public class ServerModel extends BaseServerModel {
 
         Command command = commands.getOrDefault(commandKey, new UnsupportedCommand("Unsupported request type"));
         try {
-            return command.execute(requestData);
+            String response = command.execute(requestData);
+            return response + "\nEND";  // Append "END" to signify the end of the response
         } catch (Exception e) {
-            return "Error processing request: " + e.getMessage();
+            return "Error processing request: " + e.getMessage() + "\nEND";  // Ensure "END" is also sent in case of an error
         }
     }
 }
