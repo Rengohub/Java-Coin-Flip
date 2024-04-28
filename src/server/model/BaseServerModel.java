@@ -15,7 +15,7 @@ public abstract class BaseServerModel {
         try {
             connection = DriverManager.getConnection(url);
             System.out.println("Database connected successfully.");
-            DatabaseUtils.initializeDatabase(); // Assuming this method manages its own connection.
+            DatabaseUtils.initializeDatabase();
         } catch (SQLException e) {
             System.err.println("Failed to connect to the database: " + e.getMessage());
         }

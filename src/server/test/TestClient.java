@@ -16,12 +16,13 @@ public class TestClient {
     private JLabel userStatusLabel;
     private String currentUser = null;
     private int currentUserId = -1;
+    private AuthenticationManager authManager;
 
     public TestClient(String serverAddress, int serverPort) throws Exception {
-        // Establish connection to the server
         socket = new Socket(serverAddress, serverPort);
         out = new PrintWriter(socket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        authManager = new AuthenticationManager(this);
         createUI();
     }
 
@@ -40,10 +41,10 @@ public class TestClient {
         registerButton = new JButton("Register User");
         playGameButton = new JButton("Play Game");
 
-        loginButton.addActionListener(this::handleLogin);
+        loginButton.addActionListener(e -> authManager.showLoginDialog());
         logoutButton.addActionListener(this::handleLogout);
-        registerButton.addActionListener(this::handleRegister);
-        playGameButton.addActionListener(e -> playCoinFlipGame());
+        registerButton.addActionListener(e -> authManager.showRegistrationDialog());
+        playGameButton.addActionListener(e -> openCoinFlipGame());
 
         userStatusLabel = new JLabel("No user logged in");
 
@@ -76,51 +77,19 @@ public class TestClient {
         registerButton.setVisible(currentUser == null);
     }
 
-    private void handleRegister(ActionEvent e) {
-        JTextField usernameField = new JTextField(10);
-        JPasswordField passwordField = new JPasswordField(10);
-        JPanel panel = new JPanel();
-        panel.add(new JLabel("Username:"));
-        panel.add(usernameField);
-        panel.add(new JLabel("Password:"));
-        panel.add(passwordField);
-
-        int result = JOptionPane.showConfirmDialog(null, panel, "Register", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (result == JOptionPane.OK_OPTION) {
-            String username = usernameField.getText().trim();
-            String password = new String(passwordField.getPassword()).trim();
-
-            sendRequest("REGISTER_USER:" + username + "," + password);
-        }
-    }
-
-    private void handleLogin(ActionEvent e) {
-        JTextField usernameField = new JTextField(10);
-        JPasswordField passwordField = new JPasswordField(10);
-        JPanel panel = new JPanel();
-        panel.add(new JLabel("Username:"));
-        panel.add(usernameField);
-        panel.add(new JLabel("Password:"));
-        panel.add(passwordField);
-
-        int result = JOptionPane.showConfirmDialog(null, panel, "Login", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (result == JOptionPane.OK_OPTION) {
-            String username = usernameField.getText().trim();
-            String password = new String(passwordField.getPassword()).trim();
-            sendRequest("LOGIN:" + username + "," + password);
-        }
-    }
-
     private void handleLogout(ActionEvent e) {
         currentUser = null;
+        currentUserId = -1;
         updateUIBasedOnUser();
         JOptionPane.showMessageDialog(null, "Logged out successfully.");
     }
 
-    private String sendRequest(String request) {
+    protected String sendRequest(String request) {
         try {
             out.println(request);
+//            out.flush();
             String response = in.readLine();
+            System.out.println("Sent Request: " + response);
             if (request.startsWith("LOGIN:") && response.startsWith("Login successful")) {
                 String uidPart = response.split("=")[1].trim();
                 currentUserId = Integer.parseInt(uidPart);
@@ -128,6 +97,7 @@ public class TestClient {
                 updateUIBasedOnUser();
                 return "Logged in successfully as " + currentUser + " with UID " + currentUserId;
             } else {
+                System.out.println("Received Response: " + response);
                 return response;
             }
         } catch (Exception ex) {
@@ -135,12 +105,16 @@ public class TestClient {
         }
     }
 
-    public void playCoinFlipGame() {
-        if (currentUserId != -1) {
-            String response = sendRequest("PLAY_COIN_FLIP:" + currentUserId);
-            JOptionPane.showMessageDialog(null, response);
+    private void openCoinFlipGame() {
+        if (currentUser != null) {
+            CoinFlipGameDialog gameDialog = new CoinFlipGameDialog(frame, this);
+            gameDialog.show();
         } else {
             JOptionPane.showMessageDialog(null, "Please log in to play the game.");
         }
+    }
+
+    public int getCurrentUserId() {
+        return currentUserId;
     }
 }

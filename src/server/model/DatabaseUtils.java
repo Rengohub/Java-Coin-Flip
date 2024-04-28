@@ -7,12 +7,11 @@ public class DatabaseUtils {
 
     private static final String DATABASE_URL = "jdbc:sqlite:serverDB.db";
 
-    // Synchronize the whole method to avoid concurrent access issues
     public static synchronized void executeUpdate(String sql, String[] params) throws SQLException {
         try (Connection conn = DriverManager.getConnection(DATABASE_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
-                pstmt.setString(i + 1, params[i]); // Correctly setting parameters
+                pstmt.setString(i + 1, params[i]);
             }
             pstmt.executeUpdate();
             System.out.println("Update executed successfully.");
@@ -24,7 +23,7 @@ public class DatabaseUtils {
         try (Connection conn = DriverManager.getConnection(DATABASE_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
-                pstmt.setString(i + 1, params[i]); // Correctly setting parameters
+                pstmt.setString(i + 1, params[i]);
             }
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {

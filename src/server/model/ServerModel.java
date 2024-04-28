@@ -39,7 +39,7 @@ public class ServerModel extends BaseServerModel {
         try {
             return command.execute(requestData);
         } catch (Exception e) {
-            return "Error processing request: " + e.getMessage(); // General error handling, could be refined further
+            return "Error processing request: " + e.getMessage();
         }
     }
 }

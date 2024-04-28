@@ -23,7 +23,11 @@ public class ClientHandler implements Runnable {
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
 
             String inputLine;
-            while ((inputLine = in.readLine()) != null) {
+            while (true) {  // Change to a condition that can be controlled, e.g., until a shutdown command is received
+                inputLine = in.readLine();
+                if (inputLine == null || "disconnect".equals(inputLine.trim())) {
+                    break;  // Exit loop on disconnect command or if client closes connection
+                }
                 String response = model.processMessage(inputLine);
                 out.println(response);
             }
