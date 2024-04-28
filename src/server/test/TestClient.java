@@ -13,7 +13,13 @@ public class TestClient {
     private PrintWriter out;
     private BufferedReader in;
     private JFrame frame;
-    private JButton loginButton, logoutButton, registerButton, playCoinGameButton, playDiceGameButton, viewAccountButton;
+    private JButton loginButton,
+            logoutButton,
+            registerButton,
+            playCoinGameButton,
+            playDiceGameButton,
+            adminPanelButton,
+            viewAccountButton;
     private JLabel userStatusLabel;
     private String currentUser = null;
     private int currentUserId = -1;
@@ -43,6 +49,7 @@ public class TestClient {
         playCoinGameButton = new JButton("Play CoinFlip");
         playDiceGameButton = new JButton("Play Dice");
         viewAccountButton = new JButton("View Account");
+        adminPanelButton = new JButton("Admin Panel");
 
 
         loginButton.addActionListener(e -> authManager.showLoginDialog());
@@ -50,6 +57,7 @@ public class TestClient {
         registerButton.addActionListener(e -> authManager.showRegistrationDialog());
         playCoinGameButton.addActionListener(e -> openCoinFlipGame());
         playDiceGameButton.addActionListener(e -> openDiceGame());
+        adminPanelButton.addActionListener(e -> openAdminPanel());
 
         viewAccountButton.addActionListener(e -> viewAccountDetails());
 
@@ -62,7 +70,9 @@ public class TestClient {
         panel.add(playCoinGameButton);
         panel.add(playDiceGameButton);
         panel.add(viewAccountButton);
+        panel.add(adminPanelButton);
         panel.add(userStatusLabel);
+
 
         updateUIBasedOnUser();
 
@@ -75,14 +85,22 @@ public class TestClient {
     private void updateUIBasedOnUser() {
         if (currentUser != null) {
             userStatusLabel.setText("Logged in as: " + currentUser);
-            playCoinGameButton.setEnabled(true);
-            playDiceGameButton.setEnabled(true);
-            viewAccountButton.setEnabled(true);
+            playCoinGameButton.setVisible(true);
+            playDiceGameButton.setVisible(true);
+            viewAccountButton.setVisible(true);
+
+            // Check if the current user is the admin
+            if (currentUserId == 1) {
+                adminPanelButton.setVisible(true);
+            } else {
+                adminPanelButton.setVisible(false);
+            }
         } else {
             userStatusLabel.setText("No user logged in");
-            playCoinGameButton.setEnabled(false);
-            playDiceGameButton.setEnabled(false);
-            viewAccountButton.setEnabled(false);
+            playCoinGameButton.setVisible(false);
+            playDiceGameButton.setVisible(false);
+            viewAccountButton.setVisible(false);
+            adminPanelButton.setVisible(false);
         }
 
         logoutButton.setVisible(currentUser != null);
@@ -165,6 +183,15 @@ public class TestClient {
             gameDialog.show();
         } else {
             JOptionPane.showMessageDialog(null, "Please log in to play the game.");
+        }
+    }
+
+    private void openAdminPanel() {
+        if (currentUser != null) {
+            AdminPanelDialog adminPanelDialog = new AdminPanelDialog(frame, this);
+            adminPanelDialog.show();
+        } else {
+            JOptionPane.showMessageDialog(null, "Please have admin to access.");
         }
     }
 

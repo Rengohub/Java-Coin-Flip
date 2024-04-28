@@ -23,6 +23,7 @@ public class ServerModel extends BaseServerModel {
         commands.put("CREATE_USER", new CreateUser());
         commands.put("DELETE_USER", new DeleteUser());
         commands.put("READ_USER", new ReadUser());
+        commands.put("READ_ALL_USERS", new ReadAllUsers());
         commands.put("UPDATE_USER", new UpdateUser());
         commands.put("LOGIN", new Login());
         commands.put("REGISTER_USER", new RegisterUser());
