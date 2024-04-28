@@ -3,37 +3,36 @@ package server.test;
 import javax.swing.*;
 import java.awt.*;
 
-public class CoinFlipGameDialog {
+public class DiceRollGameDialog {
     private JDialog dialog;
     private JLabel resultLabel;
     private TestClient client;
-    private JButton headsButton, tailsButton;
     private JTextField betAmountField;
+    private JButton[] numberButtons = new JButton[6]; // Array to hold buttons for numbers 1-6
 
-    public CoinFlipGameDialog(Frame owner, TestClient client) {
+    public DiceRollGameDialog(Frame owner, TestClient client) {
         this.client = client;
-        dialog = new JDialog(owner, "Coin Flip Game", false);
-        dialog.setSize(300, 200);
+        dialog = new JDialog(owner, "Dice Roll Game", false);
+        dialog.setSize(400, 300);
         dialog.setLayout(new BorderLayout());
 
-        resultLabel = new JLabel("Enter your bet and choose HEADS or TAILS.", SwingConstants.CENTER);
+        resultLabel = new JLabel("Enter your bet amount and choose a number (1-6).", SwingConstants.CENTER);
         dialog.add(resultLabel, BorderLayout.NORTH);
 
-        betAmountField = new JTextField(5);  // Input for betting amount
         JPanel betPanel = new JPanel();
+        betAmountField = new JTextField(5); // Input for betting amount
         betPanel.add(new JLabel("Bet Amount:"));
         betPanel.add(betAmountField);
         dialog.add(betPanel, BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel();
-        headsButton = new JButton("HEADS");
-        tailsButton = new JButton("TAILS");
-
-        headsButton.addActionListener(e -> playGame("HEADS"));
-        tailsButton.addActionListener(e -> playGame("TAILS"));
-
-        buttonPanel.add(headsButton);
-        buttonPanel.add(tailsButton);
+        // Grid layout for 6 buttons
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 6));
+        for (int i = 0; i < 6; i++) {
+            int number = i + 1;
+            numberButtons[i] = new JButton(String.valueOf(number));
+            numberButtons[i].addActionListener(e -> playDiceGame(number));
+            buttonPanel.add(numberButtons[i]);
+        }
         dialog.add(buttonPanel, BorderLayout.SOUTH);
     }
 
@@ -41,16 +40,16 @@ public class CoinFlipGameDialog {
         dialog.setVisible(true);
     }
 
-    private void playGame(String bet) {
+    private void playDiceGame(int chosenNumber) {
         if (client.getCurrentUserId() != -1) {
             String betAmount = betAmountField.getText().trim();
             if (betAmount.matches("\\d+") && Integer.parseInt(betAmount) > 0) {
                 disableButtons();
-                String requestData = String.format("%d,%s,%s", client.getCurrentUserId(), bet, betAmount);
-                String response = client.sendRequest("FLIP_COIN:" + requestData);
+                String requestData = String.format("%d,%s,%s", client.getCurrentUserId(), chosenNumber, betAmount);
+                String response = client.sendRequest("ROLL_DICE:" + requestData);
                 resultLabel.setText("<html><center>" + response.replace(", ", "<br>") + "</center></html>");
                 Timer timer = new Timer(8000, e -> {
-                    resultLabel.setText("Enter your bet and choose HEADS or TAILS.");
+                    resultLabel.setText("Enter your bet amount and choose a number (1-6).");
                     enableButtons();
                 });
                 timer.setRepeats(false);
@@ -64,13 +63,16 @@ public class CoinFlipGameDialog {
     }
 
     private void disableButtons() {
-        headsButton.setEnabled(false);
-        tailsButton.setEnabled(false);
+        for (JButton button : numberButtons) {
+            button.setEnabled(false);
+        }
+        betAmountField.setEnabled(false);
     }
 
     private void enableButtons() {
-        headsButton.setEnabled(true);
-        tailsButton.setEnabled(true);
+        for (JButton button : numberButtons) {
+            button.setEnabled(true);
+        }
+        betAmountField.setEnabled(true);
     }
-
 }
