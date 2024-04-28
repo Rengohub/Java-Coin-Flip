@@ -13,7 +13,7 @@ public class TestClient {
     private PrintWriter out;
     private BufferedReader in;
     private JFrame frame;
-    private JButton loginButton, logoutButton, registerButton, playGameButton, viewAccountButton;
+    private JButton loginButton, logoutButton, registerButton, playCoinGameButton, playDiceGameButton, viewAccountButton;
     private JLabel userStatusLabel;
     private String currentUser = null;
     private int currentUserId = -1;
@@ -40,14 +40,17 @@ public class TestClient {
         loginButton = new JButton("Login");
         logoutButton = new JButton("Logout");
         registerButton = new JButton("Register User");
-        playGameButton = new JButton("Play Game");
+        playCoinGameButton = new JButton("Play CoinFlip");
+        playDiceGameButton = new JButton("Play Dice");
         viewAccountButton = new JButton("View Account");
 
 
         loginButton.addActionListener(e -> authManager.showLoginDialog());
         logoutButton.addActionListener(this::handleLogout);
         registerButton.addActionListener(e -> authManager.showRegistrationDialog());
-        playGameButton.addActionListener(e -> openCoinFlipGame());
+        playCoinGameButton.addActionListener(e -> openCoinFlipGame());
+        playDiceGameButton.addActionListener(e -> openDiceGame());
+
         viewAccountButton.addActionListener(e -> viewAccountDetails());
 
         userStatusLabel = new JLabel("No user logged in");
@@ -56,7 +59,8 @@ public class TestClient {
         panel.add(loginButton);
         panel.add(logoutButton);
         panel.add(registerButton);
-        panel.add(playGameButton);
+        panel.add(playCoinGameButton);
+        panel.add(playDiceGameButton);
         panel.add(viewAccountButton);
         panel.add(userStatusLabel);
 
@@ -71,11 +75,13 @@ public class TestClient {
     private void updateUIBasedOnUser() {
         if (currentUser != null) {
             userStatusLabel.setText("Logged in as: " + currentUser);
-            playGameButton.setEnabled(true);
+            playCoinGameButton.setEnabled(true);
+            playDiceGameButton.setEnabled(true);
             viewAccountButton.setEnabled(true);
         } else {
             userStatusLabel.setText("No user logged in");
-            playGameButton.setEnabled(false);
+            playCoinGameButton.setEnabled(false);
+            playDiceGameButton.setEnabled(false);
             viewAccountButton.setEnabled(false);
         }
 
@@ -141,6 +147,15 @@ public class TestClient {
     private void openCoinFlipGame() {
         if (currentUser != null) {
             CoinFlipGameDialog gameDialog = new CoinFlipGameDialog(frame, this);
+            gameDialog.show();
+        } else {
+            JOptionPane.showMessageDialog(null, "Please log in to play the game.");
+        }
+    }
+
+    private void openDiceGame() {
+        if (currentUser != null) {
+            DiceRollGameDialog gameDialog = new DiceRollGameDialog(frame, this);
             gameDialog.show();
         } else {
             JOptionPane.showMessageDialog(null, "Please log in to play the game.");
