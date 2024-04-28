@@ -1,6 +1,7 @@
 package server.test;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,6 +44,8 @@ public class TestClient {
 
     private void createUI() {
         frame = new JFrame("Test Client");
+        frame.setMinimumSize(new Dimension(600, 150));
+
         loginButton = new JButton("Login");
         logoutButton = new JButton("Logout");
         registerButton = new JButton("Register User");

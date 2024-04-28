@@ -21,16 +21,15 @@ public class ReadAllUsers implements Command {
     }
 
     private String formatUsersData(ArrayList<HashMap<String, String>> allUsersData) {
-        StringBuilder result = new StringBuilder("<html><table>");  // Start with HTML for better formatting in JOptionPane or similar
-        result.append("<tr><th>ID</th><th>Username</th><th>Email</th><th>Credits</th><th>Streak</th></tr>");
+        StringBuilder result = new StringBuilder();
         for (HashMap<String, String> userData : allUsersData) {
-            result.append("<tr>");
-            userData.forEach((key, value) -> {
-                result.append("<td>").append(value).append("</td>");
-            });
-            result.append("</tr>");
+            result.append(userData.get("id"))
+                    .append(",").append(userData.get("username"))
+                    .append(",").append(userData.get("email"))
+                    .append(",").append(userData.get("credits"))
+                    .append(",").append(userData.get("streak"))
+                    .append("\n");
         }
-        result.append("</table></html>");
-        return result.toString();
+        return result.toString().trim();
     }
 }

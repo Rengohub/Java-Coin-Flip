@@ -14,8 +14,12 @@ public class DatabaseUtils {
             for (int i = 0; i < params.length; i++) {
                 pstmt.setString(i + 1, params[i]);
             }
-            pstmt.executeUpdate();
-            System.out.println("Update executed successfully.");
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("Update executed successfully, affected rows: " + affectedRows);
+            } else {
+                System.out.println("No rows affected.");
+            }
         }
     }
 
