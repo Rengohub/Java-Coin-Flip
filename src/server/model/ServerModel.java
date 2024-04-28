@@ -26,6 +26,7 @@ public class ServerModel extends BaseServerModel {
         commands.put("UPDATE_USER", new UpdateUser());
         commands.put("LOGIN", new Login());
         commands.put("REGISTER_USER", new RegisterUser());
+        commands.put("PLAY_COIN_FLIP", new CoinFlip());
         // Initialize other commands similarly
     }
 

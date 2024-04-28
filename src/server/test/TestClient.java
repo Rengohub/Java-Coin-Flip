@@ -12,9 +12,9 @@ public class TestClient {
     private PrintWriter out;
     private BufferedReader in;
     private JFrame frame;
-    private JButton loginButton, logoutButton, registerButton, createUserButton;
-    private JLabel userStatusLabel; // Label to display the login status
-    private String currentUser = null; // To keep track of the logged-in user
+    private JButton loginButton, logoutButton, registerButton, playGameButton;
+    private JLabel userStatusLabel;
+    private String currentUser = null;
     private int currentUserId = -1;
 
     public TestClient(String serverAddress, int serverPort) throws Exception {
@@ -25,25 +25,36 @@ public class TestClient {
         createUI();
     }
 
+    public static void main(String[] args) {
+        try {
+            new TestClient("localhost", 12345);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Could not connect to server: " + e.getMessage());
+        }
+    }
+
     private void createUI() {
         frame = new JFrame("Test Client");
         loginButton = new JButton("Login");
         logoutButton = new JButton("Logout");
         registerButton = new JButton("Register User");
+        playGameButton = new JButton("Play Game");
 
         loginButton.addActionListener(this::handleLogin);
         logoutButton.addActionListener(this::handleLogout);
         registerButton.addActionListener(this::handleRegister);
+        playGameButton.addActionListener(e -> playCoinFlipGame());
 
-        userStatusLabel = new JLabel("No user logged in"); // Initialize the user status label
+        userStatusLabel = new JLabel("No user logged in");
 
         JPanel panel = new JPanel();
         panel.add(loginButton);
         panel.add(logoutButton);
         panel.add(registerButton);
-        panel.add(userStatusLabel); // Add the status label to the panel
+        panel.add(playGameButton);
+        panel.add(userStatusLabel);
 
-        updateUIBasedOnUser(); // Initial UI setup based on login status
+        updateUIBasedOnUser();
 
         frame.setContentPane(panel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,9 +64,11 @@ public class TestClient {
 
     private void updateUIBasedOnUser() {
         if (currentUser != null) {
-            userStatusLabel.setText("Logged in as: " + currentUser); // Update label to show logged-in user
+            userStatusLabel.setText("Logged in as: " + currentUser);
+            playGameButton.setEnabled(true);
         } else {
-            userStatusLabel.setText("No user logged in"); // Reset label when no user is logged in
+            userStatusLabel.setText("No user logged in");
+            playGameButton.setEnabled(false);
         }
 
         logoutButton.setVisible(currentUser != null);
@@ -74,8 +87,8 @@ public class TestClient {
 
         int result = JOptionPane.showConfirmDialog(null, panel, "Register", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
-            String username = usernameField.getText().trim(); // Trim to remove any leading or trailing spaces
-            String password = new String(passwordField.getPassword()).trim(); // Convert char[] to String and trim
+            String username = usernameField.getText().trim();
+            String password = new String(passwordField.getPassword()).trim();
 
             sendRequest("REGISTER_USER:" + username + "," + password);
         }
@@ -99,35 +112,35 @@ public class TestClient {
     }
 
     private void handleLogout(ActionEvent e) {
-        currentUser = null; // Clear the current user
-        updateUIBasedOnUser(); // Update UI to reflect the login status
+        currentUser = null;
+        updateUIBasedOnUser();
         JOptionPane.showMessageDialog(null, "Logged out successfully.");
     }
 
-    private void sendRequest(String request) {
+    private String sendRequest(String request) {
         try {
             out.println(request);
             String response = in.readLine();
             if (request.startsWith("LOGIN:") && response.startsWith("Login successful")) {
-                // Extract UID from response
                 String uidPart = response.split("=")[1].trim();
                 currentUserId = Integer.parseInt(uidPart);
                 currentUser = request.substring(6).split(",")[0];
                 updateUIBasedOnUser();
-                JOptionPane.showMessageDialog(null, "Logged in successfully as " + currentUser + " with UID " + currentUserId);
+                return "Logged in successfully as " + currentUser + " with UID " + currentUserId;
             } else {
-                JOptionPane.showMessageDialog(null, response);
+                return response;
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Failed to send request: " + ex.getMessage());
+            return "Failed to send request: " + ex.getMessage();
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            new TestClient("localhost", 12345);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Could not connect to server: " + e.getMessage());
+    public void playCoinFlipGame() {
+        if (currentUserId != -1) {
+            String response = sendRequest("PLAY_COIN_FLIP:" + currentUserId);
+            JOptionPane.showMessageDialog(null, response);
+        } else {
+            JOptionPane.showMessageDialog(null, "Please log in to play the game.");
         }
     }
 }
