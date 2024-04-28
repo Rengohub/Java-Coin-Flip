@@ -1,6 +1,7 @@
 package server.test;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
@@ -25,6 +26,8 @@ public class TestClient {
     private String currentUser = null;
     private int currentUserId = -1;
     private AuthenticationManager authManager;
+    private JTable leaderboardTable;
+    private DefaultTableModel leaderboardModel;
 
     public TestClient(String serverAddress, int serverPort) throws Exception {
         socket = new Socket(serverAddress, serverPort);
@@ -32,6 +35,7 @@ public class TestClient {
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         authManager = new AuthenticationManager(this);
         createUI();
+        showLeaderboard();
     }
 
     public static void main(String[] args) {
@@ -44,7 +48,7 @@ public class TestClient {
 
     private void createUI() {
         frame = new JFrame("Test Client");
-        frame.setMinimumSize(new Dimension(600, 150));
+        frame.setMinimumSize(new Dimension(600, 400));  // Adjusted for better space
 
         loginButton = new JButton("Login");
         logoutButton = new JButton("Logout");
@@ -54,28 +58,37 @@ public class TestClient {
         viewAccountButton = new JButton("View Account");
         adminPanelButton = new JButton("Admin Panel");
 
-
         loginButton.addActionListener(e -> authManager.showLoginDialog());
         logoutButton.addActionListener(this::handleLogout);
         registerButton.addActionListener(e -> authManager.showRegistrationDialog());
         playCoinGameButton.addActionListener(e -> openCoinFlipGame());
         playDiceGameButton.addActionListener(e -> openDiceGame());
         adminPanelButton.addActionListener(e -> openAdminPanel());
-
         viewAccountButton.addActionListener(e -> viewAccountDetails());
 
         userStatusLabel = new JLabel("No user logged in");
 
-        JPanel panel = new JPanel();
-        panel.add(loginButton);
-        panel.add(logoutButton);
-        panel.add(registerButton);
-        panel.add(playCoinGameButton);
-        panel.add(playDiceGameButton);
-        panel.add(viewAccountButton);
-        panel.add(adminPanelButton);
-        panel.add(userStatusLabel);
+        // Initialize the table with columns
+        leaderboardModel = new DefaultTableModel();
+        leaderboardModel.setColumnIdentifiers(new Object[]{"Username", "Credits", "Streak"});
+        leaderboardTable = new JTable(leaderboardModel);
+        leaderboardTable.setFillsViewportHeight(true);
 
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(userStatusLabel, BorderLayout.NORTH);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(loginButton);
+        buttonPanel.add(logoutButton);
+        buttonPanel.add(registerButton);
+        buttonPanel.add(playCoinGameButton);
+        buttonPanel.add(playDiceGameButton);
+        buttonPanel.add(viewAccountButton);
+        buttonPanel.add(adminPanelButton);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
+        JScrollPane scrollPane = new JScrollPane(leaderboardTable);
+        panel.add(scrollPane, BorderLayout.CENTER);
 
         updateUIBasedOnUser();
 
@@ -86,29 +99,15 @@ public class TestClient {
     }
 
     private void updateUIBasedOnUser() {
-        if (currentUser != null) {
-            userStatusLabel.setText("Logged in as: " + currentUser);
-            playCoinGameButton.setVisible(true);
-            playDiceGameButton.setVisible(true);
-            viewAccountButton.setVisible(true);
-
-            // Check if the current user is the admin
-            if (currentUserId == 1) {
-                adminPanelButton.setVisible(true);
-            } else {
-                adminPanelButton.setVisible(false);
-            }
-        } else {
-            userStatusLabel.setText("No user logged in");
-            playCoinGameButton.setVisible(false);
-            playDiceGameButton.setVisible(false);
-            viewAccountButton.setVisible(false);
-            adminPanelButton.setVisible(false);
-        }
-
-        logoutButton.setVisible(currentUser != null);
-        loginButton.setVisible(currentUser == null);
-        registerButton.setVisible(currentUser == null);
+        boolean isLoggedIn = currentUser != null;
+        userStatusLabel.setText(isLoggedIn ? "Logged in as: " + currentUser : "No user logged in");
+        playCoinGameButton.setVisible(isLoggedIn);
+        playDiceGameButton.setVisible(isLoggedIn);
+        viewAccountButton.setVisible(isLoggedIn);
+        adminPanelButton.setVisible(isLoggedIn && currentUserId == 1);
+        logoutButton.setVisible(isLoggedIn);
+        loginButton.setVisible(!isLoggedIn);
+        registerButton.setVisible(!isLoggedIn);
     }
 
     private void viewAccountDetails() {
@@ -195,6 +194,18 @@ public class TestClient {
             adminPanelDialog.show();
         } else {
             JOptionPane.showMessageDialog(null, "Please have admin to access.");
+        }
+    }
+
+    private void showLeaderboard() {
+        String response = sendRequest("LEADERBOARD");
+        if (response != null && !response.isEmpty()) {
+            String[] rows = response.split("\n");
+            leaderboardModel.setRowCount(0);
+            for (int i = 1; i < rows.length; i++) {
+                String[] data = rows[i].split(" \\| ");
+                leaderboardModel.addRow(data);
+            }
         }
     }
 
