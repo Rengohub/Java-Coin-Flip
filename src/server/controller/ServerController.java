@@ -22,12 +22,6 @@ public class ServerController {
         this.pool = Executors.newFixedThreadPool(10);
     }
 
-    public static void main(String[] args) {
-        ServerModel model = new ServerModel();
-        ServerController server = new ServerController(12345, model);
-        server.start();
-    }
-
     public void start() {
         try {
             serverSocket = new ServerSocket(port);
