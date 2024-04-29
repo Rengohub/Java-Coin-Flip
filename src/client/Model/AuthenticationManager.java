@@ -1,12 +1,15 @@
-package server.test;
+package client.Model;
+
+import client.Controller.ClientController;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class AuthenticationManager {
-    private TestClient client;
+    private ClientController clientController;
 
-    public AuthenticationManager(TestClient client) {
-        this.client = client;
+    public AuthenticationManager(ClientController clientController) {
+        this.clientController = clientController;
     }
 
     public void showLoginDialog() {
@@ -22,7 +25,8 @@ public class AuthenticationManager {
         if (result == JOptionPane.OK_OPTION) {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword()).trim();
-            client.sendRequest("LOGIN:" + username + "," + password);
+            String response = clientController.sendRequest("LOGIN:" + username + "," + password);
+            JOptionPane.showMessageDialog(null, response);
         }
     }
 
@@ -39,19 +43,8 @@ public class AuthenticationManager {
         if (result == JOptionPane.OK_OPTION) {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword()).trim();
-
-            if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Username and password cannot be empty.", "Registration Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            String response = client.sendRequest("REGISTER_USER:" + username + "," + password);
-
-            if (response.contains("Error: Username already exists.")) {
-                JOptionPane.showMessageDialog(null, "The username is already taken. Please try a different username.", "Registration Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null, response);
-            }
+            String response = clientController.sendRequest("REGISTER_USER:" + username + "," + password);
+            JOptionPane.showMessageDialog(null, response);
         }
     }
 }

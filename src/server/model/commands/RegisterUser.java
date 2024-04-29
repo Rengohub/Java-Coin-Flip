@@ -14,6 +14,10 @@ public class RegisterUser implements Command {
         String username = inputs[0].trim();
         String password = inputs[1].trim();
 
+        if (usernameExists(username)) {
+            return "Error: Username already exists.";
+        }
+
         int credits = 100;
         int streak = 0;
 
@@ -25,6 +29,19 @@ public class RegisterUser implements Command {
             return "User registered successfully.";
         } catch (SQLException e) {
             return "Error registering user: " + e.getMessage();
+        }
+    }
+
+    private boolean usernameExists(String username) {
+        String checkSql = "SELECT COUNT(*) FROM users WHERE username = ?";
+        String[] params = new String[]{username};
+
+        try {
+            int count = DatabaseUtils.executeQueryForCount(checkSql, params);
+            return count > 0;
+        } catch (SQLException e) {
+            System.err.println("SQL Error: " + e.getMessage());
+            return false;
         }
     }
 }
