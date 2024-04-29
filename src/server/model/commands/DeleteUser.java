@@ -6,13 +6,13 @@ import java.sql.SQLException;
 
 public class DeleteUser implements Command {
     @Override
-    public String execute(String username) {
-        if (username == null || username.trim().isEmpty()) {
-            return "Invalid username provided.";
+    public String execute(String userId) {
+        if (userId == null || userId.trim().isEmpty()) {
+            return "Invalid user ID provided.";
         }
-        String sql = "DELETE FROM users WHERE username = ?";
+        String sql = "DELETE FROM users WHERE id = ?";
         try {
-            DatabaseUtils.executeUpdate(sql, new String[]{username});
+            DatabaseUtils.executeUpdate(sql, new String[]{userId.trim()});
             return "User deleted successfully.";
         } catch (SQLException e) {
             return "Error deleting user: " + e.getMessage();

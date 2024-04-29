@@ -15,7 +15,6 @@ public class Login implements Command {
         try {
             HashMap<String, String> userData = DatabaseUtils.executeQueryWithResult(sql, new String[]{data[0]});
             if (userData != null && userData.get("password").equals(data[1])) {
-                // Send back login successful message with the UID
                 return "Login successful: UID=" + userData.get("id");
             } else {
                 return "Invalid password or username does not exist";

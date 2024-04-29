@@ -8,7 +8,7 @@ public class DiceRollGameDialog {
     private JLabel resultLabel;
     private TestClient client;
     private JTextField betAmountField;
-    private JButton[] numberButtons = new JButton[6]; // Array to hold buttons for numbers 1-6
+    private JButton[] numberButtons = new JButton[6];
 
     public DiceRollGameDialog(Frame owner, TestClient client) {
         this.client = client;
@@ -20,7 +20,7 @@ public class DiceRollGameDialog {
         dialog.add(resultLabel, BorderLayout.NORTH);
 
         JPanel betPanel = new JPanel();
-        betAmountField = new JTextField(5); // Input for betting amount
+        betAmountField = new JTextField(5);
         betPanel.add(new JLabel("Bet Amount:"));
         betPanel.add(betAmountField);
         dialog.add(betPanel, BorderLayout.CENTER);

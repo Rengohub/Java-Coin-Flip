@@ -23,11 +23,13 @@ public class ServerModel extends BaseServerModel {
         commands.put("CREATE_USER", new CreateUser());
         commands.put("DELETE_USER", new DeleteUser());
         commands.put("READ_USER", new ReadUser());
+        commands.put("READ_ALL_USERS", new ReadAllUsers());
         commands.put("UPDATE_USER", new UpdateUser());
         commands.put("LOGIN", new Login());
         commands.put("REGISTER_USER", new RegisterUser());
         commands.put("FLIP_COIN", new CoinFlip());
         commands.put("ROLL_DICE", new DiceRoll());
+        commands.put("LEADERBOARD", new LeaderBoard());
         // Initialize other commands similarly
     }
 
@@ -41,7 +43,7 @@ public class ServerModel extends BaseServerModel {
             String response = command.execute(requestData);
             return response + "\nEND";  // Append "END" to signify the end of the response
         } catch (Exception e) {
-            return "Error processing request: " + e.getMessage() + "\nEND";  // Ensure "END" is also sent in case of an error
+            return "Error processing request: " + e.getMessage() + "\nEND";
         }
     }
 }
