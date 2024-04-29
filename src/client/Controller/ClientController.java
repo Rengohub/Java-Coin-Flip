@@ -97,14 +97,20 @@ public class ClientController {
         // logoutButton.addActionListener(this::handleLogout);
         loginButton.addActionListener(e -> authManager.showLoginDialog());
         registerButton.addActionListener(e -> authManager.showRegistrationDialog());
-        playCoinGameButton.addActionListener(e -> new ClientCoinView());
+        playCoinGameButton.addActionListener(e -> openCoinGame());
         playDiceGameButton.addActionListener(e -> new ClientDiceView());
 
         updateUIBasedOnUser();
         frame.setVisible(true);
     }
 
-    
+    private void openCoinGame() {
+        if (currentUserId != -1) {
+            new ClientCoinView(this, clientModel);
+        } else {
+            System.out.println("User must be logged in to play the game.");
+        }
+    }
 
     // public String getCurrUser() {
     //     updateUIBasedOnUser();
@@ -130,6 +136,14 @@ public class ClientController {
         logoutButton.setVisible(isLoggedIn);
         loginButton.setVisible(!isLoggedIn);
         registerButton.setVisible(!isLoggedIn);
+    }
+
+    public int getCurrentUserId() {
+        return currentUserId;
+    }
+
+    public void setCurrentUserId(int currentUserId) {
+        this.currentUserId = currentUserId;
     }
 
     // private void handleLogout(ActionEvent e) {
