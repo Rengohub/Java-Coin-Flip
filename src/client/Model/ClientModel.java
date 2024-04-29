@@ -1,4 +1,4 @@
-package client;
+package client.Model;
 
 import java.io.*;
 import java.net.Socket;

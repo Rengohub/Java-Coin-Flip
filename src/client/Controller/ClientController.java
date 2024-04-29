@@ -1,8 +1,14 @@
-package client;
+package client.Controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+
+import client.View.ClientCoinView;
+import client.View.ClientDiceView;
+import client.View.ClientGameStart;
+import client.View.ClientLeaderboardView;
+import client.View.ClientLoginView;
 
 public class ClientController {
     private ClientLoginView loginView;

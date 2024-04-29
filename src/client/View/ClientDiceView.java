@@ -1,8 +1,9 @@
-package client;
+package client.View;
 
 import java.awt.*;
 
 import javax.swing.*;
+
 import java.awt.event.*;
 import java.util.Random;
 import java.io.File;
@@ -153,7 +154,7 @@ public class ClientDiceView extends JFrame {
         choicesPanel.add(bettingPanel);
 
         // startImageRotator();
-        jframe.add(ClientView.header(), BorderLayout.NORTH);
+        jframe.add(ClientHeader.header(jframe), BorderLayout.NORTH);
         jframe.add(imgLabel, BorderLayout.CENTER);
         jframe.add(choicesPanel, BorderLayout.SOUTH);
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

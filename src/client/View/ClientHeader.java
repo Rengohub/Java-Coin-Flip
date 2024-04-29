@@ -1,23 +1,16 @@
-package client;
+package client.View;
 
 import javax.swing.*;
-//import javax.xml.ws.Action;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Random;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
-public class ClientView extends JFrame {
+public class ClientHeader extends JPanel { 
     private static JButton MainMenu;
-
-                                        //////////     START GAME       //////////
-    public ClientView() {
-        new ClientGameStart();
-    }
-
-    static public JPanel header() {
+    public ClientHeader() {
+        header(null);
+        }
+    
+    static public JPanel header(JFrame frame) {
         JPanel header = new JPanel();
         header.setLayout(new GridLayout(1, 1));
         JLabel label = new JLabel("Welcome to the Dice Game!");
@@ -31,6 +24,14 @@ public class ClientView extends JFrame {
 
         JButton leaderBoards = new JButton("Leaderboards");
         JButton logoutButton = new JButton("Logout");
+
+        MainMenu.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.setVisible(false);
+                ClientGameStart gameStart = new ClientGameStart();
+
+            }
+        });
         
         header.add(label);
         header.add(Username);
@@ -41,10 +42,6 @@ public class ClientView extends JFrame {
         header.add(logoutButton);
 
         return header;
-    }
-
-    public void cycleFrame() {
-        setVisible(false);
     }
 
     public JButton getMainMenu() {

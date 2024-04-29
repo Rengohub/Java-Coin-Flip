@@ -1,4 +1,4 @@
-package client;
+package client.View;
 
 import java.awt.*;
 import javax.swing.*;
@@ -33,6 +33,7 @@ public class ClientGameStart extends JFrame {
         diceGameButton = new JButton("Dice Game");
         choicePanel.add(diceGameButton);
 
+        jframe.add(ClientHeader.header(jframe), BorderLayout.NORTH); 
         jframe.add(label, BorderLayout.CENTER);
         jframe.add(choicePanel, BorderLayout.SOUTH);
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
