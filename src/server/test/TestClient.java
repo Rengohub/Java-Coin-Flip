@@ -32,6 +32,14 @@ public class TestClient {
     private JTable leaderboardTable;
     private DefaultTableModel leaderboardModel;
 
+    public static void main(String[] args) {
+        try {
+            new TestClient("localhost", 12345);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Could not connect to server: " + e.getMessage());
+        }
+    }
+
     public TestClient(String serverAddress, int serverPort) throws Exception {
         socket = new Socket(serverAddress, serverPort);
         out = new PrintWriter(socket.getOutputStream(), true);
@@ -39,14 +47,6 @@ public class TestClient {
         authManager = new AuthenticationManager(this);
         createUI();
         showLeaderboard();
-    }
-
-    public static void main(String[] args) {
-        try {
-            new TestClient("localhost", 12345);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Could not connect to server: " + e.getMessage());
-        }
     }
 
     private void createUI() {
