@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class ReadAllUsers implements Command {
     @Override
     public String execute(String data) {
-        String sql = "SELECT * FROM users";  // Query to select all users
+        String sql = "SELECT * FROM users";
         try {
             ArrayList<HashMap<String, String>> allUsersData = DatabaseUtils.executeQueryWithResults(sql, new String[]{});
             if (allUsersData.isEmpty()) {

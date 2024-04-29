@@ -15,7 +15,7 @@ public class DiceRoll implements Command {
         }
 
         int userId = Integer.parseInt(parts[0]);
-        int userBet = Integer.parseInt(parts[1]); // The user bets on a number 1-6
+        int userBet = Integer.parseInt(parts[1]);
         int betAmount = Integer.parseInt(parts[2]);
 
         if (userBet < 1 || userBet > 6) {
@@ -25,7 +25,7 @@ public class DiceRoll implements Command {
         try {
             String fetchSql = "SELECT credits FROM users WHERE id = ?";
 
-            int diceResult = new Random().nextInt(6) + 1; // Generates a number between 1 and 6
+            int diceResult = new Random().nextInt(6) + 1;
             int creditChange = (userBet == diceResult) ? betAmount * 5 : -betAmount; // Pays 5:1 if they win
 
             String sql = "UPDATE users SET credits = credits + ? WHERE id = ?";

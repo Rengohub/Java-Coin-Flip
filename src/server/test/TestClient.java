@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,7 +23,8 @@ public class TestClient {
             playCoinGameButton,
             playDiceGameButton,
             adminPanelButton,
-            viewAccountButton;
+            viewAccountButton,
+            reloadLeaderboardButton;
     private JLabel userStatusLabel;
     private String currentUser = null;
     private int currentUserId = -1;
@@ -48,7 +51,7 @@ public class TestClient {
 
     private void createUI() {
         frame = new JFrame("Test Client");
-        frame.setMinimumSize(new Dimension(600, 400));  // Adjusted for better space
+        frame.setMinimumSize(new Dimension(600, 400));
 
         loginButton = new JButton("Login");
         logoutButton = new JButton("Logout");
@@ -57,6 +60,7 @@ public class TestClient {
         playDiceGameButton = new JButton("Play Dice");
         viewAccountButton = new JButton("View Account");
         adminPanelButton = new JButton("Admin Panel");
+        reloadLeaderboardButton = new JButton("Reload Leaderboard");
 
         loginButton.addActionListener(e -> authManager.showLoginDialog());
         logoutButton.addActionListener(this::handleLogout);
@@ -65,10 +69,10 @@ public class TestClient {
         playDiceGameButton.addActionListener(e -> openDiceGame());
         adminPanelButton.addActionListener(e -> openAdminPanel());
         viewAccountButton.addActionListener(e -> viewAccountDetails());
+        reloadLeaderboardButton.addActionListener(e -> showLeaderboard());
 
         userStatusLabel = new JLabel("No user logged in");
 
-        // Initialize the table with columns
         leaderboardModel = new DefaultTableModel();
         leaderboardModel.setColumnIdentifiers(new Object[]{"Username", "Credits", "Streak"});
         leaderboardTable = new JTable(leaderboardModel);
@@ -85,12 +89,26 @@ public class TestClient {
         buttonPanel.add(playDiceGameButton);
         buttonPanel.add(viewAccountButton);
         buttonPanel.add(adminPanelButton);
-        panel.add(buttonPanel, BorderLayout.SOUTH);
+
+        JPanel reloadPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        reloadPanel.add(reloadLeaderboardButton);
+        panel.add(reloadPanel, BorderLayout.NORTH);
 
         JScrollPane scrollPane = new JScrollPane(leaderboardTable);
         panel.add(scrollPane, BorderLayout.CENTER);
 
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
         updateUIBasedOnUser();
+
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closeConnection();
+                System.exit(0);
+            }
+        });
 
         frame.setContentPane(panel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -139,26 +157,22 @@ public class TestClient {
                 responseBuilder.append(line + "\n");
             }
 
-            if (line == null) {
-                // If line is null, it means the server has closed the connection unexpectedly
-                throw new IOException("Connection closed by server.");
-            }
+            if (line == null) { throw new IOException("Connection closed by server."); }
 
-            String response = responseBuilder.toString().trim(); // Trim to remove the last newline
+            String response = responseBuilder.toString().trim();
             System.out.println("Request sent: " + request);
             System.out.println("Full response received: " + response);
 
 
             // Handle specific responses
             if (request.startsWith("LOGIN:") && response.startsWith("Login successful")) {
-                String uidPart = response.split("UID=")[1].trim(); // Assuming the server sends UID in this format
+                String uidPart = response.split("UID=")[1].trim();
                 currentUserId = Integer.parseInt(uidPart);
                 currentUser = request.substring(6).split(",")[0];
                 updateUIBasedOnUser();
                 return "Logged in successfully as " + currentUser + " with UID " + currentUserId;
             }
 
-            // Return the full response for further processing or display
             return response;
 
         } catch (IOException ex) {
@@ -211,5 +225,19 @@ public class TestClient {
 
     public int getCurrentUserId() {
         return currentUserId;
+    }
+
+    private void closeConnection() {
+        if (out != null) {
+            out.println("disconnect");
+            out.flush();
+        }
+        try {
+            if (socket != null) {
+                socket.close();
+            }
+        } catch (IOException e) {
+            System.err.println("Error closing socket: " + e.getMessage());
+        }
     }
 }

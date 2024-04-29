@@ -30,7 +30,7 @@ public class ServerController {
             while (running) {
                 try {
                     Socket clientSocket = serverSocket.accept();
-                    System.out.println("New client connected on thread " + Thread.currentThread().getId());
+                    System.out.println("New client connected");
                     pool.execute(new ClientHandler(clientSocket, model));
                 } catch (IOException e) {
                     if (running) {

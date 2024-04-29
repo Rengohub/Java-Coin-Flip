@@ -43,7 +43,7 @@ public class ServerModel extends BaseServerModel {
             String response = command.execute(requestData);
             return response + "\nEND";  // Append "END" to signify the end of the response
         } catch (Exception e) {
-            return "Error processing request: " + e.getMessage() + "\nEND";  // Ensure "END" is also sent in case of an error
+            return "Error processing request: " + e.getMessage() + "\nEND";
         }
     }
 }

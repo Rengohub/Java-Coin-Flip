@@ -19,14 +19,16 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("ClientHandler is running on thread " + Thread.currentThread().getId());
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
 
             String inputLine;
-            while (true) {  // Change to a condition that can be controlled, e.g., until a shutdown command is received
+            while (true) {
                 inputLine = in.readLine();
                 if (inputLine == null || "disconnect".equals(inputLine.trim())) {
-                    break;  // Exit loop on disconnect command or if client closes connection
+                    System.out.println("Client disconnected");
+                    break;
                 }
                 String response = model.processMessage(inputLine);
                 out.println(response);

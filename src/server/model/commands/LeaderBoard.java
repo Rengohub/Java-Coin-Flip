@@ -22,7 +22,7 @@ public class LeaderBoard implements Command {
 
     private String formatLeaderboardData(ArrayList<HashMap<String, String>> leaderboardData) {
         StringBuilder result = new StringBuilder();
-        result.append("USERNAME | CREDITS | STREAK\n"); // Header row
+        result.append("USERNAME | CREDITS | STREAK\n");
         for (HashMap<String, String> userData : leaderboardData) {
             result.append(userData.get("username"))
                     .append(" | ").append(userData.get("credits"))

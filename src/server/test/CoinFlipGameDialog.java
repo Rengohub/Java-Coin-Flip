@@ -19,7 +19,7 @@ public class CoinFlipGameDialog {
         resultLabel = new JLabel("Enter your bet and choose HEADS or TAILS.", SwingConstants.CENTER);
         dialog.add(resultLabel, BorderLayout.NORTH);
 
-        betAmountField = new JTextField(5);  // Input for betting amount
+        betAmountField = new JTextField(5);
         JPanel betPanel = new JPanel();
         betPanel.add(new JLabel("Bet Amount:"));
         betPanel.add(betAmountField);

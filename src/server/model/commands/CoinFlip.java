@@ -1,6 +1,7 @@
 package server.model.commands;
 
 import server.model.DatabaseUtils;
+
 import java.sql.SQLException;
 import java.util.Random;
 

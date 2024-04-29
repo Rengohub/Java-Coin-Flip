@@ -106,13 +106,11 @@ public class AdminPanelDialog {
             String credits = creditsField.getText().trim();
             String streak = streakField.getText().trim();
 
-            // Check if any fields are empty
             if (username.isEmpty() || password.isEmpty() || credits.isEmpty() || streak.isEmpty()) {
                 JOptionPane.showMessageDialog(dialog, "All fields must be filled out", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Format the user data as expected by the server
             String userData = String.join(",", username, password, credits, streak);
 
             // Send data to the server
@@ -216,7 +214,7 @@ public class AdminPanelDialog {
         private void deleteUserData(int row) {
             int confirm = JOptionPane.showConfirmDialog(dialog, "Are you sure you want to delete this user?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                String userId = (String) tableModel.getValueAt(row, 0);  // Get user ID from the table model
+                String userId = (String) tableModel.getValueAt(row, 0);
                 String response = client.sendRequest("DELETE_USER:" + userId);
                 JOptionPane.showMessageDialog(dialog, response);
                 loadUserData();  // Reload user data to reflect the changes
