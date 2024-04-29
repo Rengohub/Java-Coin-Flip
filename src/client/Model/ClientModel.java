@@ -16,17 +16,38 @@ public class ClientModel {
         }
     }
 
-    public void sendMessage(String message) {
-        if (out != null) {
-            out.println(message);
-        }
-    }
+    public String sendRequest(String request) {
+        try {
+            // Send the request to the server
+            out.println(request);
+            out.flush();
 
-    public String receiveMessage() throws IOException {
-        if (in != null) {
-            return in.readLine(); // You might want to handle this asynchronously or in a separate thread depending on GUI responsiveness requirements.
+            StringBuilder responseBuilder = new StringBuilder();
+            String line;
+
+            // Read the response until "END" line is received
+            while ((line = in.readLine()) != null && !line.equals("END")) {
+                responseBuilder.append(line + "\n");
+            }
+
+            // Handle the case where the server closes the connection unexpectedly
+            if (line == null) {
+                throw new IOException("Connection closed by server.");
+            }
+
+            String response = responseBuilder.toString().trim();
+            System.out.println("Request sent: " + request);
+            System.out.println("Full response received: " + response);
+
+            return response;
+
+        } catch (IOException ex) {
+            System.err.println("Network error: " + ex.getMessage());
+            return "Network error: " + ex.getMessage();
+        } catch (Exception ex) {
+            System.err.println("Error during request: " + ex.getMessage());
+            return "Failed to send request: " + ex.getMessage();
         }
-        return null;
     }
 
     public void closeConnection() throws IOException {
