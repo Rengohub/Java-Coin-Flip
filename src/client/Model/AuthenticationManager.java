@@ -27,6 +27,7 @@ public class AuthenticationManager {
             String password = new String(passwordField.getPassword()).trim();
             String response = clientController.sendRequest("LOGIN:" + username + "," + password);
             JOptionPane.showMessageDialog(null, response);
+            // System.out.println("LOGIN SUCCESSFUL");
         }
     }
 

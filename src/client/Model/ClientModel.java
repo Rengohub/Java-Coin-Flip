@@ -5,8 +5,8 @@ import java.net.Socket;
 
 public class ClientModel {
     private Socket socket;
-    private PrintWriter out;
-    private BufferedReader in;
+    private static PrintWriter out;
+    private static BufferedReader in;
 
     public void connectToServer(String ip, int port) throws IOException {
         if (socket == null || socket.isClosed()) {
@@ -16,7 +16,7 @@ public class ClientModel {
         }
     }
 
-    public String sendRequest(String request) {
+    public static String sendRequest(String request) {
         try {
             // Send the request to the server
             out.println(request);

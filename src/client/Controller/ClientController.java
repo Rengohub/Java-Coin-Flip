@@ -6,13 +6,16 @@ import client.View.*;
 import server.test.CoinFlipGameDialog;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 
 public class ClientController {
     private ClientModel clientModel;
     private AuthenticationManager authManager;
-    private JFrame frame;
+    private static JFrame frame;
     private JButton loginButton,
             registerButton,
             logoutButton,
@@ -23,6 +26,8 @@ public class ClientController {
     private JLabel userStatusLabel;
     private String currentUser;
     private int currentUserId;
+    private JTable leaderboardTable;
+    private DefaultTableModel leaderboardModel;
 
     private ClientLoginView loginView;
     private ClientGameStart gameStartView;
@@ -38,6 +43,7 @@ public class ClientController {
             authManager = new AuthenticationManager(this);
             System.out.println("Connected to server successfully!");
             createUI();
+            // showLeaderboard();
         } catch (Exception e) {
             System.err.println("Error connecting to server: " + e.getMessage());
         }
@@ -56,11 +62,13 @@ public class ClientController {
         return response;
     }
 
+
     // Start UI with this
     private void createUI() {
         frame = new JFrame("Client Application");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
+        frame.setSize(1920, 970);
+        frame.setLocationRelativeTo(null);
         frame.setLayout(new FlowLayout());
 
         userStatusLabel = new JLabel("No user logged in");
@@ -72,6 +80,11 @@ public class ClientController {
         viewAccountButton = new JButton("View Account");
         adminPanelButton = new JButton("Admin Panel");
 
+        // leaderboardModel = new DefaultTableModel();
+        // leaderboardModel.setColumnIdentifiers(new Object[]{"Username", "Credits", "Streak"});
+        // leaderboardTable = new JTable(leaderboardModel);
+        // leaderboardTable.setFillsViewportHeight(true);
+
         frame.add(userStatusLabel);
         frame.add(loginButton);
         frame.add(registerButton);
@@ -81,6 +94,7 @@ public class ClientController {
         frame.add(viewAccountButton);
         frame.add(adminPanelButton);
 
+        // logoutButton.addActionListener(this::handleLogout);
         loginButton.addActionListener(e -> authManager.showLoginDialog());
         registerButton.addActionListener(e -> authManager.showRegistrationDialog());
         playCoinGameButton.addActionListener(e -> new ClientCoinView());
@@ -88,6 +102,22 @@ public class ClientController {
 
         updateUIBasedOnUser();
         frame.setVisible(true);
+    }
+
+    
+
+    // public String getCurrUser() {
+    //     updateUIBasedOnUser();
+    //     return currentUser;
+    // }
+
+    // public int getCurrentUserID() {
+    //     updateUIBasedOnUser();
+    //     return currentUserId;
+    // }
+
+    public static JFrame getFrame() {
+        return frame;
     }
 
     private void updateUIBasedOnUser() {
@@ -101,4 +131,26 @@ public class ClientController {
         loginButton.setVisible(!isLoggedIn);
         registerButton.setVisible(!isLoggedIn);
     }
+
+    // private void handleLogout(ActionEvent e) {
+    //     currentUser = null;
+    //     currentUserId = -1;
+    //     updateUIBasedOnUser();
+    //     JOptionPane.showMessageDialog(null, "Logged out successfully.");
+    // }
+
+    
+
+    // public void showLeaderboard() {
+    //     String response = ClientModel.sendRequest("LEADERBOARD");
+    //     if (response != null && !response.isEmpty()) {
+    //         String[] rows = response.split("\n");
+    //         leaderboardModel.setRowCount(0);
+    //         for (int i = 1; i < rows.length; i++) {
+    //             String[] data = rows[i].split(" \\| ");
+    //             leaderboardModel.addRow(data);
+    //         }
+    //         // new ClientLeaderboardView(leaderboardModel);
+    //     }
+    // }
 }
