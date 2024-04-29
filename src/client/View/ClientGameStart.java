@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 
 
 public class ClientGameStart extends JFrame {
-    private JFrame jframe;
+    private static JFrame jframe;
     private JButton coinGameButton;
     private JButton diceGameButton;
 
@@ -42,6 +42,10 @@ public class ClientGameStart extends JFrame {
 
     public void exitGameV() {
         jframe.setVisible(false);
+    }
+
+    public static void enterGameV() {
+        jframe.setVisible(true);
     }
 
     public JButton getCoinButton() {

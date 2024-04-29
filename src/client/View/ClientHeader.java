@@ -28,8 +28,7 @@ public class ClientHeader extends JPanel {
         MainMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 frame.setVisible(false);
-                ClientGameStart gameStart = new ClientGameStart();
-
+                ClientGameStart.enterGameV();
             }
         });
         
