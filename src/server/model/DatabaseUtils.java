@@ -1,6 +1,7 @@
 package server.model;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DatabaseUtils {
@@ -13,8 +14,12 @@ public class DatabaseUtils {
             for (int i = 0; i < params.length; i++) {
                 pstmt.setString(i + 1, params[i]);
             }
-            pstmt.executeUpdate();
-            System.out.println("Update executed successfully.");
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("Update executed successfully, affected rows: " + affectedRows);
+            } else {
+                System.out.println("No rows affected.");
+            }
         }
     }
 
@@ -50,6 +55,27 @@ public class DatabaseUtils {
             }
         }
         return userData;
+    }
+
+    public static ArrayList<HashMap<String, String>> executeQueryWithResults(String sql, String[] params) throws SQLException {
+        ArrayList<HashMap<String, String>> resultsList = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(DATABASE_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) {
+                pstmt.setString(i + 1, params[i]);
+            }
+            try (ResultSet rs = pstmt.executeQuery()) {
+                ResultSetMetaData rsmd = rs.getMetaData();
+                while (rs.next()) {
+                    HashMap<String, String> rowData = new HashMap<>();
+                    for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                        rowData.put(rsmd.getColumnName(i), rs.getString(i));
+                    }
+                    resultsList.add(rowData);
+                }
+            }
+        }
+        return resultsList;
     }
 
     public static void initializeDatabase() throws SQLException {
