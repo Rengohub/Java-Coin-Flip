@@ -39,8 +39,19 @@ public class AuthenticationManager {
         if (result == JOptionPane.OK_OPTION) {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword()).trim();
+
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Username and password cannot be empty.", "Registration Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             String response = client.sendRequest("REGISTER_USER:" + username + "," + password);
-            JOptionPane.showMessageDialog(null, response);
+
+            if (response.contains("Error: Username already exists.")) {
+                JOptionPane.showMessageDialog(null, "The username is already taken. Please try a different username.", "Registration Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, response);
+            }
         }
     }
 }

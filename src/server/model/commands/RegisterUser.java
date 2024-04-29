@@ -37,8 +37,8 @@ public class RegisterUser implements Command {
         String[] params = new String[]{username};
 
         try {
-            String result = DatabaseUtils.executeQuery(checkSql, params);
-            return Integer.parseInt(result.trim()) > 0;
+            int count = DatabaseUtils.executeQueryForCount(checkSql, params);
+            return count > 0;
         } catch (SQLException e) {
             System.err.println("SQL Error: " + e.getMessage());
             return false;

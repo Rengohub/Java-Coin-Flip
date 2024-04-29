@@ -78,6 +78,21 @@ public class DatabaseUtils {
         return resultsList;
     }
 
+    public static synchronized int executeQueryForCount(String sql, String[] params) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DATABASE_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) {
+                pstmt.setString(i + 1, params[i]);
+            }
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+
     public static void initializeDatabase() throws SQLException {
         try (Connection connection = DriverManager.getConnection(DATABASE_URL)) {
             DatabaseMetaData dbm = connection.getMetaData();
