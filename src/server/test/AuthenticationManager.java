@@ -39,7 +39,8 @@ public class AuthenticationManager {
         if (result == JOptionPane.OK_OPTION) {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword()).trim();
-            client.sendRequest("REGISTER_USER:" + username + "," + password);
+            String response = client.sendRequest("REGISTER_USER:" + username + "," + password);
+            JOptionPane.showMessageDialog(null, response);
         }
     }
 }
