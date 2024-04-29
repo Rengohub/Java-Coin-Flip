@@ -84,6 +84,7 @@ public class DatabaseUtils {
             ResultSet tables = dbm.getTables(null, null, "users", null);
             if (!tables.next()) {
                 createUsersTable(connection);
+                createAdminAcc(connection);
             }
         }
     }
@@ -98,6 +99,23 @@ public class DatabaseUtils {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
             System.out.println("Table created successfully.");
+        }
+    }
+
+    private static void createAdminAcc(Connection connection) throws SQLException {
+        String sql = "INSERT INTO users (id, username, password, credits, streak) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, 1);
+            pstmt.setString(2, "admin");
+            pstmt.setString(3, "admin");
+            pstmt.setInt(4, 0);
+            pstmt.setInt(5, 0);
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("Admin account created successfully.");
+            } else {
+                System.out.println("Failed to create admin account.");
+            }
         }
     }
 }
