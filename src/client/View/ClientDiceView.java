@@ -96,7 +96,7 @@ public class ClientDiceView extends JFrame {
             int number = i + 1;
             icon[i] = new ImageIcon(spriteArr[i]);
             guessButton[i] = new JButton(String.valueOf(number));
-            guessButton[i].addActionListener(e -> playDiceGame(number));
+//            guessButton[i].addActionListener(e -> playDiceGame(number));
 
             try {
                 img[i] = ImageIO.read(new File(spriteArr[i]));

@@ -3,19 +3,19 @@ package client.Controller;
 import client.Model.AuthenticationManager;
 import client.Model.ClientModel;
 import client.View.*;
-import server.test.CoinFlipGameDialog;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 public class ClientController {
+    private static JFrame frame;
     private ClientModel clientModel;
     private AuthenticationManager authManager;
-    private static JFrame frame;
     private JButton loginButton,
             registerButton,
             logoutButton,
@@ -49,6 +49,10 @@ public class ClientController {
         }
     }
 
+    public static JFrame getFrame() {
+        return frame;
+    }
+
     public String sendRequest(String request) {
         String response = clientModel.sendRequest(request);
         // Handle login specific response
@@ -62,12 +66,11 @@ public class ClientController {
         return response;
     }
 
-
     // Start UI with this
     private void createUI() {
         frame = new JFrame("Client Application");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1920, 970);
+        frame.setSize(700, 150);
         frame.setLocationRelativeTo(null);
         frame.setLayout(new FlowLayout());
 
@@ -94,30 +97,45 @@ public class ClientController {
         frame.add(viewAccountButton);
         frame.add(adminPanelButton);
 
-        // logoutButton.addActionListener(this::handleLogout);
+        logoutButton.addActionListener(this::handleLogout);
         loginButton.addActionListener(e -> authManager.showLoginDialog());
         registerButton.addActionListener(e -> authManager.showRegistrationDialog());
-        playCoinGameButton.addActionListener(e -> new ClientCoinView());
+        playCoinGameButton.addActionListener(e -> openCoinGame());
         playDiceGameButton.addActionListener(e -> new ClientDiceView());
+        adminPanelButton.addActionListener(e -> openAdminPanel());
 
         updateUIBasedOnUser();
         frame.setVisible(true);
+
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    clientModel.closeConnection();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                System.exit(0);
+            }
+        });
     }
 
-    
+    private void openCoinGame() {
+        if (currentUserId != -1) {
+            new ClientCoinView(this, clientModel);
+        } else {
+            System.out.println("User must be logged in to play the game.");
+        }
+    }
 
-    // public String getCurrUser() {
-    //     updateUIBasedOnUser();
-    //     return currentUser;
-    // }
-
-    // public int getCurrentUserID() {
-    //     updateUIBasedOnUser();
-    //     return currentUserId;
-    // }
-
-    public static JFrame getFrame() {
-        return frame;
+    private void openAdminPanel() {
+        if (currentUser != null && currentUserId == 1) {
+            AdminPanelDialog adminPanel = new AdminPanelDialog(frame, this);
+            adminPanel.show();
+        } else {
+            JOptionPane.showMessageDialog(frame, "Only admin can access this panel.", "Access Denied", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void updateUIBasedOnUser() {
@@ -132,22 +150,21 @@ public class ClientController {
         registerButton.setVisible(!isLoggedIn);
     }
 
-    public static int getCurrentUserID() {
+    public int getCurrentUserId() {
         return currentUserId;
     }
 
-    public String getCurrentUser() {
-        return currentUser;
+    public void setCurrentUserId(int currentUserId) {
+        this.currentUserId = currentUserId;
     }
 
-    // private void handleLogout(ActionEvent e) {
-    //     currentUser = null;
-    //     currentUserId = -1;
-    //     updateUIBasedOnUser();
-    //     JOptionPane.showMessageDialog(null, "Logged out successfully.");
-    // }
+    private void handleLogout(ActionEvent e) {
+        currentUser = null;
+        currentUserId = -1;
+        updateUIBasedOnUser();
+        JOptionPane.showMessageDialog(null, "Logged out successfully.");
+    }
 
-    
 
     // public void showLeaderboard() {
     //     String response = ClientModel.sendRequest("LEADERBOARD");
