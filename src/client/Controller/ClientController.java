@@ -25,7 +25,7 @@ public class ClientController {
             adminPanelButton;
     private JLabel userStatusLabel;
     private String currentUser;
-    private int currentUserId;
+    private static int currentUserId;
     private JTable leaderboardTable;
     private DefaultTableModel leaderboardModel;
 
@@ -130,6 +130,14 @@ public class ClientController {
         logoutButton.setVisible(isLoggedIn);
         loginButton.setVisible(!isLoggedIn);
         registerButton.setVisible(!isLoggedIn);
+    }
+
+    public static int getCurrentUserID() {
+        return currentUserId;
+    }
+
+    public String getCurrentUser() {
+        return currentUser;
     }
 
     // private void handleLogout(ActionEvent e) {

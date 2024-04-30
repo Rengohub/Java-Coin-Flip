@@ -4,6 +4,9 @@ import java.awt.*;
 
 import javax.swing.*;
 
+import client.Controller.ClientController;
+import client.Model.ClientModel;
+
 import java.awt.event.*;
 import java.util.Random;
 import java.io.File;
@@ -138,16 +141,16 @@ public class ClientDiceView extends JFrame {
     }
 
     private void playDiceGame(int chosenNumber) {
-        if (client.getCurrentUserId() != -1) {
-            String betAmount = betAmountField.getText().trim();
+        if (ClientController.getCurrentUserID() != -1) {
+            String betAmount = betField.getText().trim();
             if (betAmount.matches("\\d+") && Integer.parseInt(betAmount) > 0) {
-                disableButtons();
-                String requestData = String.format("%d,%s,%s", client.getCurrentUserId(), chosenNumber, betAmount);
-                String response = client.sendRequest("ROLL_DICE:" + requestData);
+                // disableButtons();
+                String requestData = String.format("%d,%s,%s", ClientController.getCurrentUserID(), chosenNumber, betAmount);
+                String response = ClientModel.sendRequest("ROLL_DICE:" + requestData);
                 resultLabel.setText("<html><center>" + response.replace(", ", "<br>") + "</center></html>");
                 Timer timer = new Timer(8000, e -> {
                     resultLabel.setText("Enter your bet amount and choose a number (1-6).");
-                    enableButtons();
+                    // enableButtons();
                 });
                 timer.setRepeats(false);
                 timer.start();
