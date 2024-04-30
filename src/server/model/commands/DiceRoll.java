@@ -26,7 +26,7 @@ public class DiceRoll implements Command {
             String fetchSql = "SELECT credits FROM users WHERE id = ?";
 
             int diceResult = new Random().nextInt(6) + 1;
-            int creditChange = (userBet == diceResult) ? betAmount * 5 : -betAmount; // Pays 5:1 if they win
+            int creditChange = (userBet == diceResult) ? betAmount * 20 : -betAmount; // Pays 20:1 if they win
 
             String sql = "UPDATE users SET credits = credits + ? WHERE id = ?";
             DatabaseUtils.executeUpdate(sql, new String[]{String.valueOf(creditChange), String.valueOf(userId)});
