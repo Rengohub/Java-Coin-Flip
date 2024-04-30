@@ -1,66 +1,49 @@
 package client.View;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-
 import client.Controller.ClientController;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
-public class ClientHeader extends JPanel { 
-    private static JButton MainMenu;
-    
+public class ClientHeader {
+    private static JLabel Username = new JLabel("Username: " + ClientController.getCurrentUser());
+    private static JLabel balance = new JLabel("Balance: " + ClientController.getBalance());
+    private static JButton MainMenu = new JButton("Main Menu");
+    private static JButton leaderBoards = new JButton("Leaderboards");
+    private static ClientController controller;
 
-    public ClientHeader() {
-        header(null);
-        }
-    
-    static public JPanel header(JFrame frame) {
+
+    public static JPanel header(JFrame frame) {
         JPanel header = new JPanel();
-        header.setLayout(new GridLayout(1, 1));
-        JLabel label = new JLabel("Welcome to the Dice Game!");
+        header.setLayout(new GridLayout(1, 7));
 
-        JLabel Username = new JLabel("Username: " + "username");
-
-
-        JTextField streak = new JTextField("Streak: 0", 10);
-        streak.setEditable(false);
-        JTextField balance = new JTextField("Balance: 0", 10);
-        balance.setEditable(false);
-        MainMenu = new JButton("Main Menu");
-        
-        MainMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                frame.setVisible(false);
-                ClientController.getFrame();
+        MainMenu.addActionListener(e -> {
+            frame.setVisible(false);
+            JFrame mainFrame = ClientController.getFrame();
+            if (mainFrame != null) {
+                mainFrame.setVisible(true);
             }
         });
 
-        JButton leaderBoards = new JButton("Leaderboards");
-       
-        leaderBoards.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // ClientController.showLeaderboard();
-            }
+        leaderBoards.addActionListener(e -> {
+            if (controller != null) controller.showLeaderboard();
         });
 
-        JButton logoutButton = new JButton("Logout");
-        
-        header.add(label);
+        header.add(new JLabel("Welcome to the Dice Game!"));
         header.add(Username);
-        header.add(streak);
         header.add(balance);
         header.add(MainMenu);
         header.add(leaderBoards);
-        header.add(logoutButton);
-
-        // logoutButton.addActionListener(handleLogout(this));
 
         return header;
     }
 
-    public JButton getMainMenu() {
+    public static JButton getMainMenu() {
         return MainMenu;
+    }
+
+    public static void updateHeader() {
+        Username.setText("Username: " + ClientController.getCurrentUser());
+        balance.setText("Balance: " + ClientController.getBalance());
     }
 }

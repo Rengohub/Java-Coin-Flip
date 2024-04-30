@@ -2,7 +2,9 @@ package client.Controller;
 
 import client.Model.AuthenticationManager;
 import client.Model.ClientModel;
-import client.View.*;
+import client.View.AdminPanelDialog;
+import client.View.ClientCoinView;
+import client.View.ClientDiceView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -11,24 +13,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class ClientController {
     private static JFrame frame;
-    private static int currentUserId;
-    private ClientModel clientModel;
-    private AuthenticationManager authManager;
-    private JButton loginButton,
+    private static ClientModel clientModel;
+    private static JButton loginButton,
             registerButton,
             logoutButton,
             playCoinGameButton,
             playDiceGameButton,
             viewAccountButton,
-            adminPanelButton,
-            reloadLeaderboardButton;
-    private JLabel userStatusLabel;
-    private String currentUser;
+            adminPanelButton;
+    private static JLabel userStatusLabel;
+    private static String currentUser;
+    private static int currentUserId;
+    private AuthenticationManager authManager;
     private JTable leaderboardTable;
     private DefaultTableModel leaderboardModel;
+    private JButton reloadLeaderboardButton;
 
     // Start // 
     public ClientController(String serverAddress, int serverPort) {
@@ -48,7 +51,7 @@ public class ClientController {
         return frame;
     }
 
-    public String sendRequest(String request) {
+    public static String sendRequest(String request) {
         String response = clientModel.sendRequest(request);
         // Handle login specific response
         if (request.startsWith("LOGIN:") && response.startsWith("Login successful")) {
@@ -59,6 +62,51 @@ public class ClientController {
             return "Logged in successfully as " + currentUser + " with UID " + currentUserId;
         }
         return response;
+    }
+
+    private static void updateUIBasedOnUser() {
+        boolean isLoggedIn = currentUser != null;
+        userStatusLabel.setText(isLoggedIn ? "Logged in as: " + currentUser : "No user logged in");
+        playCoinGameButton.setVisible(isLoggedIn);
+        playDiceGameButton.setVisible(isLoggedIn);
+        viewAccountButton.setVisible(isLoggedIn);
+        adminPanelButton.setVisible(isLoggedIn && currentUserId == 1);
+        logoutButton.setVisible(isLoggedIn);
+        loginButton.setVisible(!isLoggedIn);
+        registerButton.setVisible(!isLoggedIn);
+    }
+
+    public static int getCurrentUserId() {
+        return currentUserId;
+    }
+
+    public static String getCurrentUser() {
+        return currentUser;
+    }
+
+    public static String getBalance() {
+        String userID = String.valueOf(getCurrentUserId());
+        String request = "READ_USER:" + userID;
+        String response = sendRequest(request);
+        System.out.println("Given Request Data: " + response);
+        String balance = "0";
+        if (response.startsWith("Network error") || response.startsWith("Failed")) {
+            return "Error fetching balance";
+        }
+        try {
+            HashMap<String, String> userData = new HashMap<>();
+            String[] keyValuePairs = response.split("<br><b>");
+            for (String pair : keyValuePairs) {
+                String[] entry = pair.split("</b>: ");
+                userData.put(entry[0].trim(), entry[1].trim());
+                System.out.println(userData.toString());
+            }
+            balance = userData.getOrDefault("credits", "0");
+        } catch (Exception e) {
+            System.err.println("Failed to parse user data: " + e.getMessage());
+        }
+        System.out.println("Balance: " + balance);
+        return balance;
     }
 
     // Start UI with this
@@ -146,22 +194,6 @@ public class ClientController {
         } else {
             JOptionPane.showMessageDialog(frame, "Only admin can access this panel.", "Access Denied", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    private void updateUIBasedOnUser() {
-        boolean isLoggedIn = currentUser != null;
-        userStatusLabel.setText(isLoggedIn ? "Logged in as: " + currentUser : "No user logged in");
-        playCoinGameButton.setVisible(isLoggedIn);
-        playDiceGameButton.setVisible(isLoggedIn);
-        viewAccountButton.setVisible(isLoggedIn);
-        adminPanelButton.setVisible(isLoggedIn && currentUserId == 1);
-        logoutButton.setVisible(isLoggedIn);
-        loginButton.setVisible(!isLoggedIn);
-        registerButton.setVisible(!isLoggedIn);
-    }
-
-    public int getCurrentUserId() {
-        return currentUserId;
     }
 
     private void handleLogout(ActionEvent e) {
