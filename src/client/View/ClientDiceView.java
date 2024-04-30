@@ -159,17 +159,17 @@ public class ClientDiceView extends JFrame {
     }
 
     private void playDiceGame(int chosenNumber) {
-        if (controller.getCurrentUserId() != -1) {
+        if (ClientController.getCurrentUserId() != -1) {
             String betAmount = betField.getText().trim();
-            if (betAmount.matches("\\d+") && Integer.parseInt(betAmount) > 0) {
+            if (betAmount.matches("\\d+") && Integer.parseInt(betAmount) > 0 && Integer.parseInt(betAmount) <= Integer.parseInt(ClientController.getBalance())){
                 disableButtons();
-                String requestData = String.format("%d,%s,%s", controller.getCurrentUserId(), chosenNumber, betAmount);
+                String requestData = String.format("%d,%s,%s", ClientController.getCurrentUserId(), chosenNumber, betAmount);
                 String response = ClientModel.sendRequest("ROLL_DICE:" + requestData);
                 processResponse(response);
                 enableButtons();
                 ClientHeader.updateHeader();
             } else {
-               JOptionPane.showMessageDialog(this, "Please enter a valid bet amount.");
+               JOptionPane.showMessageDialog(this, "Please enter a valid bet amount. Please play within your wallet buddy!");
             }
         } else {
            JOptionPane.showMessageDialog(this, "Please log in to play.");

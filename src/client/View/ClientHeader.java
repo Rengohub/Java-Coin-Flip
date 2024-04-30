@@ -9,7 +9,6 @@ public class ClientHeader {
     private static JLabel Username = new JLabel("Username: " + ClientController.getCurrentUser());
     private static JLabel balance = new JLabel("Balance: " + ClientController.getBalance());
     private static JButton MainMenu = new JButton("Main Menu");
-    private static JButton leaderBoards = new JButton("Leaderboards");
     private static ClientController controller;
 
 
@@ -25,15 +24,10 @@ public class ClientHeader {
             }
         });
 
-        leaderBoards.addActionListener(e -> {
-            if (controller != null) controller.showLeaderboard();
-        });
-
         header.add(new JLabel("Welcome to the Casino of Chance!"));
         header.add(Username);
         header.add(balance);
         header.add(MainMenu);
-        header.add(leaderBoards);
 
         return header;
     }

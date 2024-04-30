@@ -159,7 +159,7 @@ public class ClientCoinView extends JFrame {
     private void playGame(String choice) {
         if (controller.getCurrentUserId() != -1) {
             int bet = Integer.parseInt(betField.getText());
-            if (bet > 0) {
+            if (bet > 0 && bet <= Integer.parseInt(ClientController.getBalance())) {
                 disableButtons();
                 String requestData = String.format("%d,%s,%d", controller.getCurrentUserId(), choice, bet);
                 try {
@@ -172,7 +172,7 @@ public class ClientCoinView extends JFrame {
                 enableButtons();
                 ClientHeader.updateHeader();
             } else {
-                JOptionPane.showMessageDialog(this, "Invalid bet amount. Please enter a positive number.");
+                JOptionPane.showMessageDialog(this, "Invalid bet amount. Please play within your wallet buddy!");
             }
         } else {
             JOptionPane.showMessageDialog(this, "Please log in to play the game.");
