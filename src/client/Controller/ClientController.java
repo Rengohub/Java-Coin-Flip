@@ -15,18 +15,18 @@ import java.util.HashMap;
 
 public class ClientController {
     private static JFrame frame;
-    private ClientModel clientModel;
+    private static ClientModel clientModel;
     private AuthenticationManager authManager;
-    private JButton loginButton,
-            registerButton,
-            logoutButton,
-            playCoinGameButton,
-            playDiceGameButton,
-            viewAccountButton,
-            adminPanelButton;
-    private JLabel userStatusLabel;
-    private String currentUser;
-    private int currentUserId;
+    private static JButton loginButton;
+    private static JButton registerButton;
+    private static JButton logoutButton;
+    private static JButton playCoinGameButton;
+    private static JButton playDiceGameButton;
+    private static JButton viewAccountButton;
+    private static JButton adminPanelButton;
+    private static JLabel userStatusLabel;
+    private static String currentUser;
+    private static int currentUserId;
     private JTable leaderboardTable;
     private DefaultTableModel leaderboardModel;
 
@@ -54,7 +54,7 @@ public class ClientController {
         return frame;
     }
 
-    public String sendRequest(String request) {
+    public static String sendRequest(String request) {
         String response = clientModel.sendRequest(request);
         // Handle login specific response
         if (request.startsWith("LOGIN:") && response.startsWith("Login successful")) {
@@ -139,7 +139,7 @@ public class ClientController {
         }
     }
 
-    private void updateUIBasedOnUser() {
+    private static void updateUIBasedOnUser() {
         boolean isLoggedIn = currentUser != null;
         userStatusLabel.setText(isLoggedIn ? "Logged in as: " + currentUser : "No user logged in");
         playCoinGameButton.setVisible(isLoggedIn);
@@ -151,12 +151,12 @@ public class ClientController {
         registerButton.setVisible(!isLoggedIn);
     }
 
-    public int getCurrentUserId() {
+    public static int getCurrentUserId() {
         return currentUserId;
     }
 
     public void setCurrentUserId(int currentUserId) {
-        this.currentUserId = currentUserId;
+        ClientController.currentUserId = currentUserId;
     }
 
     private void handleLogout(ActionEvent e) {
@@ -169,12 +169,12 @@ public class ClientController {
     public void showLeaderboard() {
     }
 
-    public String getCurrentUser() {
+    public static String getCurrentUser() {
         return currentUser;
     }
 
-    public String getBalance() {
-        String userID = String.valueOf(this.getCurrentUserId());
+    public static String getBalance() {
+        String userID = String.valueOf(getCurrentUserId());
         String request = "READ_USER:" + userID;
         String response = sendRequest(request);
         System.out.println("Given Request Data: " + response);
@@ -184,15 +184,17 @@ public class ClientController {
         }
         try {
             HashMap<String, String> userData = new HashMap<>();
-            String[] keyValuePairs = response.split(", ");
+            String[] keyValuePairs = response.split("<br><b>");
             for (String pair : keyValuePairs) {
-                String[] entry = pair.split(": ");
+                String[] entry = pair.split("</b>: ");
                 userData.put(entry[0].trim(), entry[1].trim());
+                System.out.println(userData.toString());
             }
-            balance =  userData.getOrDefault("Balance", "0");
+            balance =  userData.getOrDefault("credits", "0");
         } catch (Exception e) {
             System.err.println("Failed to parse user data: " + e.getMessage());
         }
+        System.out.println("Balance: " + balance);
         return balance;
     }
 
