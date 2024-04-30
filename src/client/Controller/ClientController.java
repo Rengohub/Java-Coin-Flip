@@ -8,6 +8,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 public class ClientController {
     private static JFrame frame;
@@ -67,7 +70,7 @@ public class ClientController {
     private void createUI() {
         frame = new JFrame("Client Application");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1920, 970);
+        frame.setSize(700, 150);
         frame.setLocationRelativeTo(null);
         frame.setLayout(new FlowLayout());
 
@@ -94,7 +97,7 @@ public class ClientController {
         frame.add(viewAccountButton);
         frame.add(adminPanelButton);
 
-         logoutButton.addActionListener(this::handleLogout);
+        logoutButton.addActionListener(this::handleLogout);
         loginButton.addActionListener(e -> authManager.showLoginDialog());
         registerButton.addActionListener(e -> authManager.showRegistrationDialog());
         playCoinGameButton.addActionListener(e -> openCoinGame());
@@ -103,6 +106,19 @@ public class ClientController {
 
         updateUIBasedOnUser();
         frame.setVisible(true);
+
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    clientModel.closeConnection();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                System.exit(0);
+            }
+        });
     }
 
     private void openCoinGame() {
@@ -142,12 +158,12 @@ public class ClientController {
         this.currentUserId = currentUserId;
     }
 
-     private void handleLogout(ActionEvent e) {
-         currentUser = null;
-         currentUserId = -1;
-         updateUIBasedOnUser();
-         JOptionPane.showMessageDialog(null, "Logged out successfully.");
-     }
+    private void handleLogout(ActionEvent e) {
+        currentUser = null;
+        currentUserId = -1;
+        updateUIBasedOnUser();
+        JOptionPane.showMessageDialog(null, "Logged out successfully.");
+    }
 
 
     // public void showLeaderboard() {
