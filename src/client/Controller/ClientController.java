@@ -14,6 +14,7 @@ import java.io.IOException;
 
 public class ClientController {
     private static JFrame frame;
+    private static int currentUserId;
     private ClientModel clientModel;
     private AuthenticationManager authManager;
     private JButton loginButton,
@@ -22,18 +23,12 @@ public class ClientController {
             playCoinGameButton,
             playDiceGameButton,
             viewAccountButton,
-            adminPanelButton;
+            adminPanelButton,
+            reloadLeaderboardButton;
     private JLabel userStatusLabel;
     private String currentUser;
-    private static int currentUserId;
     private JTable leaderboardTable;
     private DefaultTableModel leaderboardModel;
-
-    private ClientLoginView loginView;
-    private ClientGameStart gameStartView;
-    private ClientCoinView coinGameView;
-    private ClientDiceView diceGameView;
-    private ClientLeaderboardView leaderboardView;
 
     // Start // 
     public ClientController(String serverAddress, int serverPort) {
@@ -70,10 +65,12 @@ public class ClientController {
     private void createUI() {
         frame = new JFrame("Client Application");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(700, 150);
+        frame.setSize(700, 220);
         frame.setLocationRelativeTo(null);
-        frame.setLayout(new FlowLayout());
+        frame.setLayout(new BorderLayout());
 
+        // Top panel for buttons and labels
+        JPanel topPanel = new JPanel(new FlowLayout());
         userStatusLabel = new JLabel("No user logged in");
         loginButton = new JButton("Login");
         registerButton = new JButton("Register");
@@ -82,29 +79,42 @@ public class ClientController {
         playDiceGameButton = new JButton("Play Dice Game");
         viewAccountButton = new JButton("View Account");
         adminPanelButton = new JButton("Admin Panel");
+        reloadLeaderboardButton = new JButton("Reload Leaderboard");
 
-        // leaderboardModel = new DefaultTableModel();
-        // leaderboardModel.setColumnIdentifiers(new Object[]{"Username", "Credits", "Streak"});
-        // leaderboardTable = new JTable(leaderboardModel);
-        // leaderboardTable.setFillsViewportHeight(true);
+        topPanel.add(userStatusLabel);
+        topPanel.add(loginButton);
+        topPanel.add(registerButton);
+        topPanel.add(logoutButton);
+        topPanel.add(playCoinGameButton);
+        topPanel.add(playDiceGameButton);
+        topPanel.add(viewAccountButton);
+        topPanel.add(adminPanelButton);
 
-        frame.add(userStatusLabel);
-        frame.add(loginButton);
-        frame.add(registerButton);
-        frame.add(logoutButton);
-        frame.add(playCoinGameButton);
-        frame.add(playDiceGameButton);
-        frame.add(viewAccountButton);
-        frame.add(adminPanelButton);
+        frame.add(topPanel, BorderLayout.NORTH);
 
+        // Leaderboard setup
+        leaderboardModel = new DefaultTableModel(new Object[]{"Username", "Credits", "Streak"}, 0);
+        leaderboardTable = new JTable(leaderboardModel);
+        JScrollPane scrollPane = new JScrollPane(leaderboardTable);
+        frame.add(scrollPane, BorderLayout.CENTER);
+
+        // Bottom pnael for reload button
+        JPanel bottomPanel = new JPanel(new FlowLayout());
+        bottomPanel.add(reloadLeaderboardButton);
+        frame.add(bottomPanel, BorderLayout.SOUTH);
+
+        // Event handlers
         logoutButton.addActionListener(this::handleLogout);
         loginButton.addActionListener(e -> authManager.showLoginDialog());
         registerButton.addActionListener(e -> authManager.showRegistrationDialog());
         playCoinGameButton.addActionListener(e -> openCoinGame());
         playDiceGameButton.addActionListener(e -> new ClientDiceView(this));
         adminPanelButton.addActionListener(e -> openAdminPanel());
+        reloadLeaderboardButton.addActionListener(e -> showLeaderboard());
 
+        showLeaderboard();
         updateUIBasedOnUser();
+
         frame.setVisible(true);
 
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -114,7 +124,7 @@ public class ClientController {
                 try {
                     clientModel.closeConnection();
                 } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    System.err.println("Error closing connection: " + ex.getMessage());
                 }
                 System.exit(0);
             }
@@ -154,10 +164,6 @@ public class ClientController {
         return currentUserId;
     }
 
-    public void setCurrentUserId(int currentUserId) {
-        this.currentUserId = currentUserId;
-    }
-
     private void handleLogout(ActionEvent e) {
         currentUser = null;
         currentUserId = -1;
@@ -165,17 +171,16 @@ public class ClientController {
         JOptionPane.showMessageDialog(null, "Logged out successfully.");
     }
 
-
-    // public void showLeaderboard() {
-    //     String response = ClientModel.sendRequest("LEADERBOARD");
-    //     if (response != null && !response.isEmpty()) {
-    //         String[] rows = response.split("\n");
-    //         leaderboardModel.setRowCount(0);
-    //         for (int i = 1; i < rows.length; i++) {
-    //             String[] data = rows[i].split(" \\| ");
-    //             leaderboardModel.addRow(data);
-    //         }
-    //         // new ClientLeaderboardView(leaderboardModel);
-    //     }
-    // }
+    public void showLeaderboard() {
+        String response = ClientModel.sendRequest("LEADERBOARD");
+        if (response != null && !response.isEmpty()) {
+            String[] rows = response.split("\n");
+            leaderboardModel.setRowCount(0);
+            for (int i = 1; i < rows.length; i++) {
+                String[] data = rows[i].split(" \\| ");
+                leaderboardModel.addRow(data);
+            }
+            // new ClientLeaderboardView(leaderboardModel);
+        }
+    }
 }
