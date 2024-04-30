@@ -1,3 +1,7 @@
+/*
+ * Auther: Patrick Rakowicz | Joey Bauer
+ * */
+
 package client;
 
 import client.Controller.ClientController;

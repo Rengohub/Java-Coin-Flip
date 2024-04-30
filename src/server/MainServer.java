@@ -1,3 +1,7 @@
+/*
+ * Auther: Patrick Rakowicz | Joey Bauer
+ * */
+
 package server;
 
 import server.controller.ServerController;
