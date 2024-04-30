@@ -92,7 +92,7 @@ public class ClientDiceView extends JFrame {
             int number = i + 1;
             icon[i] = new ImageIcon(spriteArr[i]);
             guessButton[i] = new JButton(String.valueOf(number));
-            guessButton[i].addActionListener(e -> playDiceGame(number));
+//            guessButton[i].addActionListener(e -> playDiceGame(number));
 
             try {
                 img[i] = ImageIO.read(new File(spriteArr[i]));
@@ -137,27 +137,27 @@ public class ClientDiceView extends JFrame {
         timer.start();
     }
 
-    private void playDiceGame(int chosenNumber) {
-        if (client.getCurrentUserId() != -1) {
-            String betAmount = betAmountField.getText().trim();
-            if (betAmount.matches("\\d+") && Integer.parseInt(betAmount) > 0) {
-                disableButtons();
-                String requestData = String.format("%d,%s,%s", client.getCurrentUserId(), chosenNumber, betAmount);
-                String response = client.sendRequest("ROLL_DICE:" + requestData);
-                resultLabel.setText("<html><center>" + response.replace(", ", "<br>") + "</center></html>");
-                Timer timer = new Timer(8000, e -> {
-                    resultLabel.setText("Enter your bet amount and choose a number (1-6).");
-                    enableButtons();
-                });
-                timer.setRepeats(false);
-                timer.start();
-            } else {
-                resultLabel.setText("Invalid bet amount entered. Please enter a positive number.");
-            }
-        } else {
-            resultLabel.setText("Please log in to play the game.");
-        }
-    }
+//    private void playDiceGame(int chosenNumber) {
+//        if (client.getCurrentUserId() != -1) {
+//            String betAmount = betAmountField.getText().trim();
+//            if (betAmount.matches("\\d+") && Integer.parseInt(betAmount) > 0) {
+//                disableButtons();
+//                String requestData = String.format("%d,%s,%s", client.getCurrentUserId(), chosenNumber, betAmount);
+//                String response = client.sendRequest("ROLL_DICE:" + requestData);
+//                resultLabel.setText("<html><center>" + response.replace(", ", "<br>") + "</center></html>");
+//                Timer timer = new Timer(8000, e -> {
+//                    resultLabel.setText("Enter your bet amount and choose a number (1-6).");
+//                    enableButtons();
+//                });
+//                timer.setRepeats(false);
+//                timer.start();
+//            } else {
+//                resultLabel.setText("Invalid bet amount entered. Please enter a positive number.");
+//            }
+//        } else {
+//            resultLabel.setText("Please log in to play the game.");
+//        }
+//    }
 
     // Image Rotator Pointer Method
     private void updateImage() {

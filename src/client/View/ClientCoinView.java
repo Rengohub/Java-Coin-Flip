@@ -12,8 +12,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class ClientCoinView extends JFrame {
-    private final ClientController clientController;
-    private final ClientModel clientModel;
+    private final ClientController controller;
     String[] imagesPath = {"src/Assets/Java-Coin-Flip.png", "src/Assets/Java-Coin-Tails-Flip.png", "src/Assets/Java-Coin-Flip.png", "src/Assets/Java-Coin-Heads-Flip.png"};
     private JFrame jframe;
     private JLabel imgLabel;
@@ -30,8 +29,7 @@ public class ClientCoinView extends JFrame {
     private boolean isRotating = true;
 
     public ClientCoinView(ClientController controller, ClientModel model) {
-        this.clientController = controller;
-        this.clientModel = model;
+        this.controller = controller;
         ImageRotator(imagesPath);
     }
 
@@ -156,14 +154,14 @@ public class ClientCoinView extends JFrame {
     }
 
     private void playGame(String choice) {
-        if (clientController.getCurrentUserId() != -1) {
+        if (controller.getCurrentUserId() != -1) {
             int bet = Integer.parseInt(betField.getText());
             if (bet > 0) {
                 disableButtons();
-                String requestData = String.format("%d,%s,%d", clientController.getCurrentUserId(), choice, bet);
+                String requestData = String.format("%d,%s,%d", controller.getCurrentUserId(), choice, bet);
                 try {
                     System.out.println(requestData);
-                    String response = ClientModel.sendRequest("FLIP_COIN:" + requestData);
+                    String response = controller.sendRequest("FLIP_COIN:" + requestData);
                     processResponse(response);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, "Failed to communicate with server: " + e.getMessage());
