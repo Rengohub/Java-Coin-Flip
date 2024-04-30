@@ -10,9 +10,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class ServerController {
-    private int port;
-    private ServerModel model;
-    private ExecutorService pool;
+    private final int port;
+    private final ServerModel model;
+    private final ExecutorService pool;
     private ServerSocket serverSocket;
     private volatile boolean running = true;
 

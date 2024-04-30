@@ -8,8 +8,8 @@ import java.awt.event.ActionEvent;
 import java.util.Arrays;
 
 public class AdminPanelDialog {
-    private JDialog dialog;
-    private TestClient client;
+    private final JDialog dialog;
+    private final TestClient client;
     private JTable userTable;
     private DefaultTableModel tableModel;
     private JButton reloadButton, createButton;
@@ -137,11 +137,11 @@ public class AdminPanelDialog {
     }
 
     class ButtonEditor extends DefaultCellEditor {
-        private JButton button;
+        private final JButton button;
         private boolean isPushed;
         private int row;
-        private String actionType;
-        private TestClient client;
+        private final String actionType;
+        private final TestClient client;
 
         public ButtonEditor(JCheckBox checkBox, TestClient client, String actionType) {
             super(checkBox);
@@ -174,7 +174,7 @@ public class AdminPanelDialog {
                 }
             }
             isPushed = false;
-            return new String(button.getText());
+            return button.getText();
         }
 
         private void showUpdateDialog(int row) {

@@ -9,8 +9,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable {
-    private Socket clientSocket;
-    private ServerModel model;
+    private final Socket clientSocket;
+    private final ServerModel model;
 
     public ClientHandler(Socket clientSocket, ServerModel model) {
         this.clientSocket = clientSocket;

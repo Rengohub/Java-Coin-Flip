@@ -20,10 +20,10 @@ public class ClientDiceView extends JFrame {
     private JTextField betField;
     private int betAmount = 0;
     String[] imagesPath = {"src/Assets/Java-Dice-1.png", "src/Assets/Java-Dice-2.png", "src/Assets/Java-Dice-3.png", "src/Assets/Java-Dice-4.png", "src/Assets/Java-Dice-5.png", "src/Assets/Java-Dice-6.png"};
-    private ImageIcon icon[] = new ImageIcon[6];
-    private String[] spriteArr= {"src/Assets/Sprites/Sprite-1.png", "src/Assets/Sprites/Sprite-2.png", "src/Assets/Sprites/Sprite-3.png", "src/Assets/Sprites/Sprite-4.png", "src/Assets/Sprites/Sprite-5.png", "src/Assets/Sprites/Sprite-6.png"};
-    private Image img[] = new Image[6];
-    private JButton guessButton[] = new JButton[6];
+    private final ImageIcon[] icon = new ImageIcon[6];
+    private final String[] spriteArr= {"src/Assets/Sprites/Sprite-1.png", "src/Assets/Sprites/Sprite-2.png", "src/Assets/Sprites/Sprite-3.png", "src/Assets/Sprites/Sprite-4.png", "src/Assets/Sprites/Sprite-5.png", "src/Assets/Sprites/Sprite-6.png"};
+    private final Image[] img = new Image[6];
+    private final JButton[] guessButton = new JButton[6];
     private Timer timer;
     private JButton decreaseBetButton;
     private JButton increaseBetButton;

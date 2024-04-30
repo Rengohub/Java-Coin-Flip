@@ -4,11 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 
 public class DiceRollGameDialog {
-    private JDialog dialog;
-    private JLabel resultLabel;
-    private TestClient client;
-    private JTextField betAmountField;
-    private JButton[] numberButtons = new JButton[6];
+    private final JDialog dialog;
+    private final JLabel resultLabel;
+    private final TestClient client;
+    private final JTextField betAmountField;
+    private final JButton[] numberButtons = new JButton[6];
 
     public DiceRollGameDialog(Frame owner, TestClient client) {
         this.client = client;

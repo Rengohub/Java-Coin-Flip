@@ -19,8 +19,8 @@ public class ClientCoinView extends JFrame {
     private JButton tailsButton;
     private JTextField betField;
     private int betAmount = 0;
-    private String headsImg = imagesPath[3];
-    private String tailsImg = imagesPath[1];
+    private final String headsImg = imagesPath[3];
+    private final String tailsImg = imagesPath[1];
     private Timer timer;
     private JButton decreaseBetButton;
     private JButton increaseBetButton;
@@ -151,13 +151,13 @@ public class ClientCoinView extends JFrame {
     }
 
     private void playGame(String choice) {
-        if (controller.getCurrentUserId() != -1) {
+        if (ClientController.getCurrentUserId() != -1) {
             int bet = Integer.parseInt(betField.getText());
             if (bet > 0 && bet <= Integer.parseInt(ClientController.getBalance())) {
                 disableButtons();
-                String requestData = String.format("%d,%s,%d", controller.getCurrentUserId(), choice, bet);
+                String requestData = String.format("%d,%s,%d", ClientController.getCurrentUserId(), choice, bet);
                 try {
-                    String response = controller.sendRequest("FLIP_COIN:" + requestData);
+                    String response = ClientController.sendRequest("FLIP_COIN:" + requestData);
                     processResponse(response);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, "Failed to communicate with server: " + e.getMessage());

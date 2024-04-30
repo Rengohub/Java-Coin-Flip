@@ -51,7 +51,7 @@ public class ClientController {
     }
 
     public static String sendRequest(String request) {
-        String response = clientModel.sendRequest(request);
+        String response = ClientModel.sendRequest(request);
         // Handle login specific response
         if (request.startsWith("LOGIN:") && response.startsWith("Login successful")) {
             String uidPart = response.split("UID=")[1].trim();

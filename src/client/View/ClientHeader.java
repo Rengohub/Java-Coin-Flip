@@ -6,9 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ClientHeader {
-    private static JLabel Username = new JLabel("Username: " + ClientController.getCurrentUser());
-    private static JLabel balance = new JLabel("Balance: " + ClientController.getBalance());
-    private static JButton MainMenu = new JButton("Main Menu");
+    private static final JLabel Username = new JLabel("Username: " + ClientController.getCurrentUser());
+    private static final JLabel balance = new JLabel("Balance: " + ClientController.getBalance());
+    private static final JButton MainMenu = new JButton("Main Menu");
     private static ClientController controller;
 
 

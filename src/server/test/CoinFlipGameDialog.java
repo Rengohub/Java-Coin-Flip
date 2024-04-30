@@ -4,11 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CoinFlipGameDialog {
-    private JDialog dialog;
-    private JLabel resultLabel;
-    private TestClient client;
-    private JButton headsButton, tailsButton;
-    private JTextField betAmountField;
+    private final JDialog dialog;
+    private final JLabel resultLabel;
+    private final TestClient client;
+    private final JButton headsButton;
+    private final JButton tailsButton;
+    private final JTextField betAmountField;
 
     public CoinFlipGameDialog(Frame owner, TestClient client) {
         this.client = client;

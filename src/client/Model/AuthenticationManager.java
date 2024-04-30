@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class AuthenticationManager {
-    private ClientController clientController;
+    private final ClientController clientController;
 
     public AuthenticationManager(ClientController clientController) {
         this.clientController = clientController;
@@ -25,7 +25,7 @@ public class AuthenticationManager {
         if (result == JOptionPane.OK_OPTION) {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword()).trim();
-            String response = clientController.sendRequest("LOGIN:" + username + "," + password);
+            String response = ClientController.sendRequest("LOGIN:" + username + "," + password);
             JOptionPane.showMessageDialog(null, response);
         }
     }
@@ -43,7 +43,7 @@ public class AuthenticationManager {
         if (result == JOptionPane.OK_OPTION) {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword()).trim();
-            String response = clientController.sendRequest("REGISTER_USER:" + username + "," + password);
+            String response = ClientController.sendRequest("REGISTER_USER:" + username + "," + password);
             JOptionPane.showMessageDialog(null, response);
         }
     }

@@ -13,9 +13,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class TestClient {
-    private Socket socket;
-    private PrintWriter out;
-    private BufferedReader in;
+    private final Socket socket;
+    private final PrintWriter out;
+    private final BufferedReader in;
     private JFrame frame;
     private JButton loginButton,
             logoutButton,
@@ -28,7 +28,7 @@ public class TestClient {
     private JLabel userStatusLabel;
     private String currentUser = null;
     private int currentUserId = -1;
-    private AuthenticationManager authManager;
+    private final AuthenticationManager authManager;
     private JTable leaderboardTable;
     private DefaultTableModel leaderboardModel;
 

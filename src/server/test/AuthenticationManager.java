@@ -3,7 +3,7 @@ package server.test;
 import javax.swing.*;
 
 public class AuthenticationManager {
-    private TestClient client;
+    private final TestClient client;
 
     public AuthenticationManager(TestClient client) {
         this.client = client;

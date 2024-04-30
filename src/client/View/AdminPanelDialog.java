@@ -9,8 +9,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class AdminPanelDialog {
-    private JDialog dialog;
-    private ClientController controller;
+    private final JDialog dialog;
+    private final ClientController controller;
     private JTable userTable;
     private DefaultTableModel tableModel;
     private JButton reloadButton, createButton;
@@ -60,7 +60,7 @@ public class AdminPanelDialog {
     }
 
     private void loadUserData() {
-        String response = controller.sendRequest("READ_ALL_USERS");
+        String response = ClientController.sendRequest("READ_ALL_USERS");
         SwingUtilities.invokeLater(() -> {
             tableModel.setRowCount(0);  // Clear existing data
             String[] rows = response.split("\n");
@@ -114,7 +114,7 @@ public class AdminPanelDialog {
             String userData = String.join(",", username, password, credits, streak);
 
             // Send data to the server
-            String response = controller.sendRequest("CREATE_USER:" + userData);
+            String response = ClientController.sendRequest("CREATE_USER:" + userData);
             JOptionPane.showMessageDialog(dialog, response);
             loadUserData();  // Reload user data to reflect changes
         }
@@ -137,11 +137,11 @@ public class AdminPanelDialog {
     }
 
     class ButtonEditor extends DefaultCellEditor {
-        private JButton button;
+        private final JButton button;
         private boolean isPushed;
         private int row;
-        private String actionType;
-        private ClientController controller;
+        private final String actionType;
+        private final ClientController controller;
 
         public ButtonEditor(JCheckBox checkBox, ClientController controller, String actionType) {
             super(checkBox);
@@ -201,7 +201,7 @@ public class AdminPanelDialog {
                 };
 
                 String userData = String.join(",", data);
-                String response = controller.sendRequest("UPDATE_USER:" + userData);
+                String response = ClientController.sendRequest("UPDATE_USER:" + userData);
                 JOptionPane.showMessageDialog(dialog, response);
                 loadUserData();
             }
@@ -211,7 +211,7 @@ public class AdminPanelDialog {
             int confirm = JOptionPane.showConfirmDialog(dialog, "Are you sure you want to delete this user?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 String userId = (String) tableModel.getValueAt(row, 0);
-                String response = controller.sendRequest("DELETE_USER:" + userId);  // Send delete request
+                String response = ClientController.sendRequest("DELETE_USER:" + userId);  // Send delete request
                 JOptionPane.showMessageDialog(dialog, response);
                 loadUserData();  // Reload user data to reflect the changes
             }
