@@ -18,29 +18,18 @@ public class ClientModel {
 
     public static String sendRequest(String request) {
         try {
-            // Send the request to the server
             out.println(request);
             out.flush();
 
             StringBuilder responseBuilder = new StringBuilder();
             String line;
 
-            // Read the response until "END" line is received
-            while ((line = in.readLine()) != null && !line.equals("END")) {
-                responseBuilder.append(line + "\n");
-            }
-
-            // Handle the case where the server closes the connection unexpectedly
-            if (line == null) {
-                throw new IOException("Connection closed by server.");
-            }
+            while ((line = in.readLine()) != null && !line.equals("END")) { responseBuilder.append(line + "\n"); }
+            if (line == null) { throw new IOException("Connection closed by server."); }
 
             String response = responseBuilder.toString().trim();
-            System.out.println("Request sent: " + request);
-            System.out.println("Full response received: " + response);
 
             return response;
-
         } catch (IOException ex) {
             System.err.println("Network error: " + ex.getMessage());
             return "Network error: " + ex.getMessage();

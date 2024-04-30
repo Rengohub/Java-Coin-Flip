@@ -8,7 +8,6 @@ import client.Controller.ClientController;
 import client.Model.ClientModel;
 
 import java.awt.event.*;
-import java.util.Random;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -41,11 +40,6 @@ public class ClientDiceView extends JFrame {
         DiceGame();
         startTimer();
     }
-
-    public void cycleFrame() {
-        jframe.setVisible(false);
-    }
-
 
     public void DiceGame() {
         jframe = new JFrame();
@@ -138,12 +132,7 @@ public class ClientDiceView extends JFrame {
         timer.start();
     }
 
-    private void stopTimer() {
-        timer.stop();
-    }
-
     private void updateImage() {
-        // while (imageFlag == 1) {
         if (isRotating && currentImageIndex < imagesPath.length) {
             try {
                 Image img = ImageIO.read(new File(imagesPath[currentImageIndex]));
@@ -234,14 +223,10 @@ public class ClientDiceView extends JFrame {
 
     private void restartRotation() {
         Timer restartTimer = new Timer(1500, e -> {
-            isRotating = true;  // Resume rotation after 1.5 seconds
+            isRotating = true;
         });
         restartTimer.setRepeats(false);
         restartTimer.start();
-    }
-    
-    public void getBet() {
-        betAmount = Integer.parseInt(betField.getText());
     }
 
     public void adjustBet(int amount) {

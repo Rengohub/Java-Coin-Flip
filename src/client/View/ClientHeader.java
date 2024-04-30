@@ -32,10 +32,6 @@ public class ClientHeader {
         return header;
     }
 
-    public static JButton getMainMenu() {
-        return MainMenu;
-    }
-
     public static void updateHeader() {
         Username.setText("Username: " + ClientController.getCurrentUser());
         balance.setText("Balance: " + ClientController.getBalance());

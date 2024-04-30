@@ -41,7 +41,6 @@ public class ClientController {
             authManager = new AuthenticationManager(this);
             System.out.println("Connected to server successfully!");
             createUI();
-            // showLeaderboard();
         } catch (Exception e) {
             System.err.println("Error connecting to server: " + e.getMessage());
         }
@@ -88,7 +87,6 @@ public class ClientController {
         String userID = String.valueOf(getCurrentUserId());
         String request = "READ_USER:" + userID;
         String response = sendRequest(request);
-        System.out.println("Given Request Data: " + response);
         String balance = "0";
         if (response.startsWith("Network error") || response.startsWith("Failed")) {
             return "Error fetching balance";
@@ -99,7 +97,6 @@ public class ClientController {
             for (String pair : keyValuePairs) {
                 String[] entry = pair.split("</b>: ");
                 userData.put(entry[0].trim(), entry[1].trim());
-                System.out.println(userData.toString());
             }
             balance = userData.getOrDefault("credits", "0");
         } catch (Exception e) {
@@ -212,7 +209,6 @@ public class ClientController {
                 String[] data = rows[i].split(" \\| ");
                 leaderboardModel.addRow(data);
             }
-            // new ClientLeaderboardView(leaderboardModel);
         }
     }
 }

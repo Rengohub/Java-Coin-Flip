@@ -1,7 +1,6 @@
 package client.View;
 
 import client.Controller.ClientController;
-import client.Model.ClientModel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -37,10 +36,6 @@ public class ClientCoinView extends JFrame {
         this.imagesPath = images;
         initializeUI();
         startTimer();
-    }
-
-    public void cycleFrame() {
-        jframe.setVisible(false);
     }
 
     public void initializeUI() {
@@ -96,7 +91,6 @@ public class ClientCoinView extends JFrame {
         jframe.setVisible(true);
 
     }
-
 
     private void startTimer() {
         int delay = 100;
@@ -163,7 +157,6 @@ public class ClientCoinView extends JFrame {
                 disableButtons();
                 String requestData = String.format("%d,%s,%d", controller.getCurrentUserId(), choice, bet);
                 try {
-                    System.out.println(requestData);
                     String response = controller.sendRequest("FLIP_COIN:" + requestData);
                     processResponse(response);
                 } catch (Exception e) {
@@ -207,7 +200,7 @@ public class ClientCoinView extends JFrame {
 
     private void restartRotation() {
         Timer restartTimer = new Timer(1500, e -> {
-            isRotating = true;  // Resume rotation after 1.5 seconds
+            isRotating = true;
         });
         restartTimer.setRepeats(false);
         restartTimer.start();

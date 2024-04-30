@@ -41,7 +41,6 @@ public class AdminPanelDialog {
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Allow editing only for the action buttons
                 return column == 5 || column == 6;
             }
         };
