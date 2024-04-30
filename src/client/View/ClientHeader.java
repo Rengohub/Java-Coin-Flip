@@ -6,17 +6,12 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ClientHeader {
-    private static JLabel Username = new JLabel("Username: ");
-    private static JTextField streak = new JTextField("Streak: 0", 10);
-    private static JTextField balance = new JTextField("Balance: 0", 10);
+    private static JLabel Username = new JLabel("Username: " + ClientController.getCurrentUser());
+    private static JLabel balance = new JLabel("Balance: " + ClientController.getBalance());
     private static JButton MainMenu = new JButton("Main Menu");
     private static JButton leaderBoards = new JButton("Leaderboards");
     private static ClientController controller;
 
-    public static void setController(ClientController cont) {
-        controller = cont;
-        updateHeader();
-    }
 
     public static JPanel header(JFrame frame) {
         JPanel header = new JPanel();
@@ -36,7 +31,6 @@ public class ClientHeader {
 
         header.add(new JLabel("Welcome to the Dice Game!"));
         header.add(Username);
-        header.add(streak);
         header.add(balance);
         header.add(MainMenu);
         header.add(leaderBoards);
@@ -44,14 +38,12 @@ public class ClientHeader {
         return header;
     }
 
-    public static void updateHeader() {
-        if (controller != null) {
-            Username.setText("Username: " + controller.getCurrentUser());
-            balance.setText("Balance: " + controller.getBalance());
-        }
-    }
-
     public static JButton getMainMenu() {
         return MainMenu;
+    }
+
+    public static void updateHeader() {
+        Username.setText("Username: " + ClientController.getCurrentUser());
+        balance.setText("Balance: " + ClientController.getBalance());
     }
 }
