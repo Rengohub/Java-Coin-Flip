@@ -29,7 +29,7 @@ public class ClientHeader {
             if (controller != null) controller.showLeaderboard();
         });
 
-        header.add(new JLabel("Welcome to the Dice Game!"));
+        header.add(new JLabel("Welcome to the Casino of Chance!"));
         header.add(Username);
         header.add(balance);
         header.add(MainMenu);

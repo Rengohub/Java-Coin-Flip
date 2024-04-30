@@ -167,6 +167,7 @@ public class ClientDiceView extends JFrame {
                 String response = ClientModel.sendRequest("ROLL_DICE:" + requestData);
                 processResponse(response);
                 enableButtons();
+                ClientHeader.updateHeader();
             } else {
                JOptionPane.showMessageDialog(this, "Please enter a valid bet amount.");
             }

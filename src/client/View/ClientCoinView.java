@@ -170,6 +170,7 @@ public class ClientCoinView extends JFrame {
                     JOptionPane.showMessageDialog(this, "Failed to communicate with server: " + e.getMessage());
                 }
                 enableButtons();
+                ClientHeader.updateHeader();
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid bet amount. Please enter a positive number.");
             }
