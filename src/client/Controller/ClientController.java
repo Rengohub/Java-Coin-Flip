@@ -25,7 +25,7 @@ public class ClientController {
             adminPanelButton;
     private JLabel userStatusLabel;
     private String currentUser;
-    private int currentUserId;
+    private static int currentUserId;
     private JTable leaderboardTable;
     private DefaultTableModel leaderboardModel;
 
