@@ -4,6 +4,9 @@ import java.awt.*;
 
 import javax.swing.*;
 
+import client.Controller.ClientController;
+import client.Model.ClientModel;
+
 import java.awt.event.*;
 import java.util.Random;
 import java.io.File;
@@ -11,6 +14,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class ClientDiceView extends JFrame {
+    private final ClientController controller;
     private JFrame jframe;
     private JLabel imgLabel;
     private JTextField guessInput;
@@ -25,8 +29,10 @@ public class ClientDiceView extends JFrame {
     private JButton decreaseBetButton;
     private JButton increaseBetButton;
     private int currentImageIndex = 0;
+    private boolean isRotating = true;
 
-    public ClientDiceView() {
+    public ClientDiceView(ClientController controller) {
+        this.controller = controller;
         ImageRotator(imagesPath);
     }
 
@@ -92,11 +98,11 @@ public class ClientDiceView extends JFrame {
             int number = i + 1;
             icon[i] = new ImageIcon(spriteArr[i]);
             guessButton[i] = new JButton(String.valueOf(number));
-//            guessButton[i].addActionListener(e -> playDiceGame(number));
+            guessButton[i].addActionListener(e -> playDiceGame(number));
 
             try {
                 img[i] = ImageIO.read(new File(spriteArr[i]));
-    
+
                 icon[i] = new ImageIcon(img[i].getScaledInstance(50, 50, Image.SCALE_SMOOTH));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -108,13 +114,8 @@ public class ClientDiceView extends JFrame {
 
 
         choicesPanel.add(GuessPanel);
-
-        // guessInput = new JTextField("Enter Guess", 10);
-
-        // choicesPanel.add(guessInput);
         choicesPanel.add(bettingPanel);
 
-        // startImageRotator();
         jframe.add(ClientHeader.header(jframe), BorderLayout.NORTH);
         jframe.add(imgLabel, BorderLayout.CENTER);
         jframe.add(choicesPanel, BorderLayout.SOUTH);
@@ -137,32 +138,13 @@ public class ClientDiceView extends JFrame {
         timer.start();
     }
 
-//    private void playDiceGame(int chosenNumber) {
-//        if (client.getCurrentUserId() != -1) {
-//            String betAmount = betAmountField.getText().trim();
-//            if (betAmount.matches("\\d+") && Integer.parseInt(betAmount) > 0) {
-//                disableButtons();
-//                String requestData = String.format("%d,%s,%s", client.getCurrentUserId(), chosenNumber, betAmount);
-//                String response = client.sendRequest("ROLL_DICE:" + requestData);
-//                resultLabel.setText("<html><center>" + response.replace(", ", "<br>") + "</center></html>");
-//                Timer timer = new Timer(8000, e -> {
-//                    resultLabel.setText("Enter your bet amount and choose a number (1-6).");
-//                    enableButtons();
-//                });
-//                timer.setRepeats(false);
-//                timer.start();
-//            } else {
-//                resultLabel.setText("Invalid bet amount entered. Please enter a positive number.");
-//            }
-//        } else {
-//            resultLabel.setText("Please log in to play the game.");
-//        }
-//    }
+    private void stopTimer() {
+        timer.stop();
+    }
 
-    // Image Rotator Pointer Method
     private void updateImage() {
         // while (imageFlag == 1) {
-        if (currentImageIndex < imagesPath.length) {
+        if (isRotating && currentImageIndex < imagesPath.length) {
             try {
                 Image img = ImageIO.read(new File(imagesPath[currentImageIndex]));
                 ImageIcon icon = new ImageIcon(img.getScaledInstance(imgLabel.getWidth(), imgLabel.getHeight(), Image.SCALE_SMOOTH));
@@ -175,6 +157,87 @@ public class ClientDiceView extends JFrame {
             currentImageIndex = 0;
         }
     }
+
+    private void playDiceGame(int chosenNumber) {
+        if (controller.getCurrentUserId() != -1) {
+            String betAmount = betField.getText().trim();
+            if (betAmount.matches("\\d+") && Integer.parseInt(betAmount) > 0) {
+                disableButtons();
+                String requestData = String.format("%d,%s,%s", controller.getCurrentUserId(), chosenNumber, betAmount);
+                String response = ClientModel.sendRequest("ROLL_DICE:" + requestData);
+                processResponse(response);
+                enableButtons();
+            } else {
+               JOptionPane.showMessageDialog(this, "Please enter a valid bet amount.");
+            }
+        } else {
+           JOptionPane.showMessageDialog(this, "Please log in to play.");
+        }
+    }
+
+    private void disableButtons() {
+        for (int i = 0; i < 6; i++) {
+            guessButton[i].setEnabled(false);
+        }
+    }
+
+    private void enableButtons() {
+        for (int i = 0; i < 6; i++) {
+            guessButton[i].setEnabled(true);
+        }
+    }
+
+    private void processResponse(String response) {
+        String[] parts = response.split(", ");
+        String userBet = parts[0].split(": ")[1];
+        String diceRoll = parts[1].split(": ")[1];
+        String outcome = parts[2].split(": ")[1];
+        String newCredits = parts[3].split(": ")[1];
+
+        showGameResults(userBet, diceRoll, outcome, newCredits);
+        restartRotation();
+    }
+
+    private void showGameResults(String userBet, String diceRoll, String outcome, String newCredits) {
+        isRotating = false;
+        String message = String.format("Your bet: %s, Dice roll: %s, Outcome: %s, New Credits: %s", userBet, diceRoll, outcome, newCredits);
+        System.out.println(message);
+
+        switch(diceRoll) {
+            case "1":
+                imgLabel.setIcon(new ImageIcon("src/Assets/Java-Dice-1.png"));
+                break;
+            case "2":
+                imgLabel.setIcon(new ImageIcon("src/Assets/Java-Dice-2.png"));
+                break;
+            case "3":
+                imgLabel.setIcon(new ImageIcon("src/Assets/Java-Dice-3.png"));
+                break;
+            case "4":
+                imgLabel.setIcon(new ImageIcon("src/Assets/Java-Dice-4.png"));
+                break;
+            case "5":
+                imgLabel.setIcon(new ImageIcon("src/Assets/Java-Dice-5.png"));
+                break;
+            case "6":
+                imgLabel.setIcon(new ImageIcon("src/Assets/Java-Dice-6.png"));
+                break;
+        }
+        
+        if (outcome.equals("Win")) {
+            JOptionPane.showMessageDialog(this, message, "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, message, "Better luck next time!", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void restartRotation() {
+        Timer restartTimer = new Timer(1500, e -> {
+            isRotating = true;  // Resume rotation after 1.5 seconds
+        });
+        restartTimer.setRepeats(false);
+        restartTimer.start();
+    }
     
     public void getBet() {
         betAmount = Integer.parseInt(betField.getText());
@@ -185,12 +248,4 @@ public class ClientDiceView extends JFrame {
         if (betAmount < 0) betAmount = 0;
         betField.setText(String.valueOf(betAmount));
     }
-
-    // public void addRollListener(ActionListener listenForRollButton) {
-    //     rollButton.addActionListener(listenForRollButton);
-    // }
-
-    // public void setResult(int result) {
-    //     resultLabel.setText("Result: " + result);
-    // }
 }

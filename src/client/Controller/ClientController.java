@@ -2,7 +2,9 @@ package client.Controller;
 
 import client.Model.AuthenticationManager;
 import client.Model.ClientModel;
-import client.View.*;
+import client.View.AdminPanelDialog;
+import client.View.ClientCoinView;
+import client.View.ClientDiceView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -16,25 +18,20 @@ import java.util.HashMap;
 public class ClientController {
     private static JFrame frame;
     private static ClientModel clientModel;
-    private AuthenticationManager authManager;
-    private static JButton loginButton;
-    private static JButton registerButton;
-    private static JButton logoutButton;
-    private static JButton playCoinGameButton;
-    private static JButton playDiceGameButton;
-    private static JButton viewAccountButton;
-    private static JButton adminPanelButton;
+    private static JButton loginButton,
+            registerButton,
+            logoutButton,
+            playCoinGameButton,
+            playDiceGameButton,
+            viewAccountButton,
+            adminPanelButton;
     private static JLabel userStatusLabel;
     private static String currentUser;
     private static int currentUserId;
+    private AuthenticationManager authManager;
     private JTable leaderboardTable;
     private DefaultTableModel leaderboardModel;
-
-    private ClientLoginView loginView;
-    private ClientGameStart gameStartView;
-    private ClientCoinView coinGameView;
-    private ClientDiceView diceGameView;
-    private ClientLeaderboardView leaderboardView;
+    private JButton reloadLeaderboardButton;
 
     // Start // 
     public ClientController(String serverAddress, int serverPort) {
@@ -67,78 +64,6 @@ public class ClientController {
         return response;
     }
 
-    // Start UI with this
-    private void createUI() {
-        frame = new JFrame("Client Application");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(700, 150);
-        frame.setLocationRelativeTo(null);
-        frame.setLayout(new FlowLayout());
-
-        userStatusLabel = new JLabel("No user logged in");
-        loginButton = new JButton("Login");
-        registerButton = new JButton("Register");
-        logoutButton = new JButton("Logout");
-        playCoinGameButton = new JButton("Play Coin Game");
-        playDiceGameButton = new JButton("Play Dice Game");
-        viewAccountButton = new JButton("View Account");
-        adminPanelButton = new JButton("Admin Panel");
-
-        // leaderboardModel = new DefaultTableModel();
-        // leaderboardModel.setColumnIdentifiers(new Object[]{"Username", "Credits", "Streak"});
-        // leaderboardTable = new JTable(leaderboardModel);
-        // leaderboardTable.setFillsViewportHeight(true);
-
-        frame.add(userStatusLabel);
-        frame.add(loginButton);
-        frame.add(registerButton);
-        frame.add(logoutButton);
-        frame.add(playCoinGameButton);
-        frame.add(playDiceGameButton);
-        frame.add(viewAccountButton);
-        frame.add(adminPanelButton);
-
-        logoutButton.addActionListener(this::handleLogout);
-        loginButton.addActionListener(e -> authManager.showLoginDialog());
-        registerButton.addActionListener(e -> authManager.showRegistrationDialog());
-        playCoinGameButton.addActionListener(e -> openCoinGame());
-        playDiceGameButton.addActionListener(e -> new ClientDiceView());
-        adminPanelButton.addActionListener(e -> openAdminPanel());
-
-        updateUIBasedOnUser();
-        frame.setVisible(true);
-
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                try {
-                    clientModel.closeConnection();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-                System.exit(0);
-            }
-        });
-    }
-
-    private void openCoinGame() {
-        if (currentUserId != -1) {
-            new ClientCoinView(this, clientModel);
-        } else {
-            System.out.println("User must be logged in to play the game.");
-        }
-    }
-
-    private void openAdminPanel() {
-        if (currentUser != null && currentUserId == 1) {
-            AdminPanelDialog adminPanel = new AdminPanelDialog(frame, this);
-            adminPanel.show();
-        } else {
-            JOptionPane.showMessageDialog(frame, "Only admin can access this panel.", "Access Denied", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
     private static void updateUIBasedOnUser() {
         boolean isLoggedIn = currentUser != null;
         userStatusLabel.setText(isLoggedIn ? "Logged in as: " + currentUser : "No user logged in");
@@ -153,20 +78,6 @@ public class ClientController {
 
     public static int getCurrentUserId() {
         return currentUserId;
-    }
-
-    public void setCurrentUserId(int currentUserId) {
-        ClientController.currentUserId = currentUserId;
-    }
-
-    private void handleLogout(ActionEvent e) {
-        currentUser = null;
-        currentUserId = -1;
-        updateUIBasedOnUser();
-        JOptionPane.showMessageDialog(null, "Logged out successfully.");
-    }
-
-    public void showLeaderboard() {
     }
 
     public static String getCurrentUser() {
@@ -190,7 +101,7 @@ public class ClientController {
                 userData.put(entry[0].trim(), entry[1].trim());
                 System.out.println(userData.toString());
             }
-            balance =  userData.getOrDefault("credits", "0");
+            balance = userData.getOrDefault("credits", "0");
         } catch (Exception e) {
             System.err.println("Failed to parse user data: " + e.getMessage());
         }
@@ -198,17 +109,110 @@ public class ClientController {
         return balance;
     }
 
+    // Start UI with this
+    private void createUI() {
+        frame = new JFrame("Client Application");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(700, 220);
+        frame.setLocationRelativeTo(null);
+        frame.setLayout(new BorderLayout());
 
-    // public void showLeaderboard() {
-    //     String response = ClientModel.sendRequest("LEADERBOARD");
-    //     if (response != null && !response.isEmpty()) {
-    //         String[] rows = response.split("\n");
-    //         leaderboardModel.setRowCount(0);
-    //         for (int i = 1; i < rows.length; i++) {
-    //             String[] data = rows[i].split(" \\| ");
-    //             leaderboardModel.addRow(data);
-    //         }
-    //         // new ClientLeaderboardView(leaderboardModel);
-    //     }
-    // }
+        // Top panel for buttons and labels
+        JPanel topPanel = new JPanel(new FlowLayout());
+        userStatusLabel = new JLabel("No user logged in");
+        loginButton = new JButton("Login");
+        registerButton = new JButton("Register");
+        logoutButton = new JButton("Logout");
+        playCoinGameButton = new JButton("Play Coin Game");
+        playDiceGameButton = new JButton("Play Dice Game");
+        viewAccountButton = new JButton("View Account");
+        adminPanelButton = new JButton("Admin Panel");
+        reloadLeaderboardButton = new JButton("Reload Leaderboard");
+
+        topPanel.add(userStatusLabel);
+        topPanel.add(loginButton);
+        topPanel.add(registerButton);
+        topPanel.add(logoutButton);
+        topPanel.add(playCoinGameButton);
+        topPanel.add(playDiceGameButton);
+        topPanel.add(viewAccountButton);
+        topPanel.add(adminPanelButton);
+
+        frame.add(topPanel, BorderLayout.NORTH);
+
+        // Leaderboard setup
+        leaderboardModel = new DefaultTableModel(new Object[]{"Username", "Credits", "Streak"}, 0);
+        leaderboardTable = new JTable(leaderboardModel);
+        JScrollPane scrollPane = new JScrollPane(leaderboardTable);
+        frame.add(scrollPane, BorderLayout.CENTER);
+
+        // Bottom pnael for reload button
+        JPanel bottomPanel = new JPanel(new FlowLayout());
+        bottomPanel.add(reloadLeaderboardButton);
+        frame.add(bottomPanel, BorderLayout.SOUTH);
+
+        // Event handlers
+        logoutButton.addActionListener(this::handleLogout);
+        loginButton.addActionListener(e -> authManager.showLoginDialog());
+        registerButton.addActionListener(e -> authManager.showRegistrationDialog());
+        playCoinGameButton.addActionListener(e -> openCoinGame());
+        playDiceGameButton.addActionListener(e -> new ClientDiceView(this));
+        adminPanelButton.addActionListener(e -> openAdminPanel());
+        reloadLeaderboardButton.addActionListener(e -> showLeaderboard());
+
+        showLeaderboard();
+        updateUIBasedOnUser();
+
+        frame.setVisible(true);
+
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    clientModel.closeConnection();
+                } catch (IOException ex) {
+                    System.err.println("Error closing connection: " + ex.getMessage());
+                }
+                System.exit(0);
+            }
+        });
+    }
+
+    private void openCoinGame() {
+        if (currentUserId != -1) {
+            new ClientCoinView(this);
+        } else {
+            System.out.println("User must be logged in to play the game.");
+        }
+    }
+
+    private void openAdminPanel() {
+        if (currentUser != null && currentUserId == 1) {
+            AdminPanelDialog adminPanel = new AdminPanelDialog(frame, this);
+            adminPanel.show();
+        } else {
+            JOptionPane.showMessageDialog(frame, "Only admin can access this panel.", "Access Denied", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void handleLogout(ActionEvent e) {
+        currentUser = null;
+        currentUserId = -1;
+        updateUIBasedOnUser();
+        JOptionPane.showMessageDialog(null, "Logged out successfully.");
+    }
+
+    public void showLeaderboard() {
+        String response = ClientModel.sendRequest("LEADERBOARD");
+        if (response != null && !response.isEmpty()) {
+            String[] rows = response.split("\n");
+            leaderboardModel.setRowCount(0);
+            for (int i = 1; i < rows.length; i++) {
+                String[] data = rows[i].split(" \\| ");
+                leaderboardModel.addRow(data);
+            }
+            // new ClientLeaderboardView(leaderboardModel);
+        }
+    }
 }
