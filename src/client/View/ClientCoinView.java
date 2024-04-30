@@ -85,8 +85,11 @@ public class ClientCoinView extends JFrame {
         headsButton.addActionListener(e -> playGame("HEADS"));
         tailsButton.addActionListener(e -> playGame("TAILS"));
 
-        // startImageRotator();
+        // Header
         jframe.add(ClientHeader.header(jframe), BorderLayout.NORTH);
+        ClientHeader.updateHeader();
+
+        // startImageRotator();
         jframe.add(imgLabel, BorderLayout.CENTER);
         jframe.add(choicesPanel, BorderLayout.SOUTH);
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

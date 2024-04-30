@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class ClientController {
     private static JFrame frame;
@@ -163,6 +164,36 @@ public class ClientController {
         currentUserId = -1;
         updateUIBasedOnUser();
         JOptionPane.showMessageDialog(null, "Logged out successfully.");
+    }
+
+    public void showLeaderboard() {
+    }
+
+    public String getCurrentUser() {
+        return currentUser;
+    }
+
+    public String getBalance() {
+        String userID = String.valueOf(this.getCurrentUserId());
+        String request = "READ_USER:" + userID;
+        String response = sendRequest(request);
+        System.out.println("Given Request Data: " + response);
+        String balance = "0";
+        if (response.startsWith("Network error") || response.startsWith("Failed")) {
+            return "Error fetching balance";
+        }
+        try {
+            HashMap<String, String> userData = new HashMap<>();
+            String[] keyValuePairs = response.split(", ");
+            for (String pair : keyValuePairs) {
+                String[] entry = pair.split(": ");
+                userData.put(entry[0].trim(), entry[1].trim());
+            }
+            balance =  userData.getOrDefault("Balance", "0");
+        } catch (Exception e) {
+            System.err.println("Failed to parse user data: " + e.getMessage());
+        }
+        return balance;
     }
 
 
