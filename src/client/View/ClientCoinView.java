@@ -28,7 +28,7 @@ public class ClientCoinView extends JFrame {
     private int currentImageIndex = 0;
     private boolean isRotating = true;
 
-    public ClientCoinView(ClientController controller, ClientModel model) {
+    public ClientCoinView(ClientController controller) {
         this.controller = controller;
         ImageRotator(imagesPath);
     }

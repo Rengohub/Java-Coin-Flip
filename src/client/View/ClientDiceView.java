@@ -14,6 +14,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class ClientDiceView extends JFrame {
+    private final ClientController controller;
     private JFrame jframe;
     private JLabel imgLabel;
     private JTextField guessInput;
@@ -30,7 +31,8 @@ public class ClientDiceView extends JFrame {
     private int currentImageIndex = 0;
     private boolean isRotating = true;
 
-    public ClientDiceView() {
+    public ClientDiceView(ClientController controller) {
+        this.controller = controller;
         ImageRotator(imagesPath);
     }
 
@@ -96,11 +98,11 @@ public class ClientDiceView extends JFrame {
             int number = i + 1;
             icon[i] = new ImageIcon(spriteArr[i]);
             guessButton[i] = new JButton(String.valueOf(number));
-//            guessButton[i].addActionListener(e -> playDiceGame(number));
+            guessButton[i].addActionListener(e -> playDiceGame(number));
 
             try {
                 img[i] = ImageIO.read(new File(spriteArr[i]));
-    
+
                 icon[i] = new ImageIcon(img[i].getScaledInstance(50, 50, Image.SCALE_SMOOTH));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -157,11 +159,11 @@ public class ClientDiceView extends JFrame {
     }
 
     private void playDiceGame(int chosenNumber) {
-        if (ClientController.getCurrentUserID() != -1) {
+        if (controller.getCurrentUserId() != -1) {
             String betAmount = betField.getText().trim();
             if (betAmount.matches("\\d+") && Integer.parseInt(betAmount) > 0) {
                 disableButtons();
-                String requestData = String.format("%d,%s,%s", ClientController.getCurrentUserID(), chosenNumber, betAmount);
+                String requestData = String.format("%d,%s,%s", controller.getCurrentUserId(), chosenNumber, betAmount);
                 String response = ClientModel.sendRequest("ROLL_DICE:" + requestData);
                 processResponse(response);
                 enableButtons();

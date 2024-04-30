@@ -101,7 +101,7 @@ public class ClientController {
         loginButton.addActionListener(e -> authManager.showLoginDialog());
         registerButton.addActionListener(e -> authManager.showRegistrationDialog());
         playCoinGameButton.addActionListener(e -> openCoinGame());
-        playDiceGameButton.addActionListener(e -> new ClientDiceView());
+        playDiceGameButton.addActionListener(e -> new ClientDiceView(this));
         adminPanelButton.addActionListener(e -> openAdminPanel());
 
         updateUIBasedOnUser();
@@ -123,7 +123,7 @@ public class ClientController {
 
     private void openCoinGame() {
         if (currentUserId != -1) {
-            new ClientCoinView(this, clientModel);
+            new ClientCoinView(this);
         } else {
             System.out.println("User must be logged in to play the game.");
         }
