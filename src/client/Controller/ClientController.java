@@ -156,6 +156,7 @@ public class ClientController {
         playDiceGameButton.addActionListener(e -> new ClientDiceView(this));
         adminPanelButton.addActionListener(e -> openAdminPanel());
         reloadLeaderboardButton.addActionListener(e -> showLeaderboard());
+        viewAccountButton.addActionListener(e -> viewAccountDetails());
 
         showLeaderboard();
         updateUIBasedOnUser();
@@ -209,6 +210,15 @@ public class ClientController {
                 String[] data = rows[i].split(" \\| ");
                 leaderboardModel.addRow(data);
             }
+        }
+    }
+
+    private void viewAccountDetails() {
+        if (currentUserId != -1) {
+            String response = sendRequest("READ_USER:" + currentUserId);
+            JOptionPane.showMessageDialog(frame, response, "Account Details", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(frame, "Please log in to view account details.", "Not Logged In", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
